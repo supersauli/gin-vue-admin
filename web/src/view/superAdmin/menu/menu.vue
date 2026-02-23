@@ -10,6 +10,13 @@
       <!-- 由于此处菜单跟左侧列表一一对应所以不需要分页 pageSize默认999 -->
       <el-table :data="tableData" row-key="ID">
         <el-table-column align="left" label="ID" min-width="100" prop="ID" />
+          <el-table-column
+          align="left"
+          label="更新时间"
+          min-width="200"
+          prop="UpdatedAt"
+          :formatter="formatSqlTimeToStr"
+        />
         <el-table-column
           align="left"
           label="展示名称"
@@ -152,7 +159,9 @@
               </el-form-item>
             </el-col>
           </el-row>
+          
           <el-row class="w-full">
+         
             <el-col :span="12">
               <el-form-item label="展示名称" prop="meta.title">
                 <el-input 
@@ -531,7 +540,7 @@
 
   import pathInfo from '@/pathInfo.json'
   import { useAppStore } from "@/pinia";
-
+  import {formatSqlTimeToStr} from '@/utils/date'
   defineOptions({
     name: 'Menus'
   })

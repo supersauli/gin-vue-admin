@@ -32,6 +32,17 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="更新时间">
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="YYYY-MM-DD"
+            @change="handleDateChange"
+          />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">
             查询
@@ -60,12 +71,21 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
+       
         <el-table-column
           align="left"
           label="id"
           min-width="60"
           prop="ID"
           sortable="custom"
+        />
+         <el-table-column
+          align="left"
+          label="更新时间"
+          min-width="200"
+          prop="UpdatedAt"
+          sortable="custom"
+          :formatter="formatSqlTimeToStr"
         />
         <el-table-column
           align="left"
@@ -421,7 +441,8 @@
   import ImportExcel from '@/components/exportExcel/importExcel.vue'
   import { llmAuto } from '@/api/autoCode'
   import { useAppStore } from "@/pinia";
-
+  import {formatSqlTimeToStr} from '@/utils/date'
+  // import dayjs from 'dayjs';
   defineOptions({
     name: 'Api'
   })
@@ -478,6 +499,7 @@
   const searchInfo = ref({})
   const apiGroupOptions = ref([])
   const apiGroupMap = ref({})
+  const dateRange = ref([])
 
   const getGroup = async () => {
     const res = await getApiGroups()
@@ -574,8 +596,24 @@
     }
   }
 
+  const handleDateChange = (val) => {
+    // 如果 val 有效且长度为2，取值；否则赋空字符串
+ let [start = '', end = ''] = val || [];
+
+  // 如果都有值且 start > end，利用数组解构进行交换
+  if (start && end && new Date(start) > new Date(end)) {
+    [start, end] = [end, start];
+  }
+
+  searchInfo.value.rangeData = {
+    beginData: start,
+    endData: end
+  };
+  }
+
   const onReset = () => {
     searchInfo.value = {}
+    dateRange.value = []
     getTableData()
   }
   // 搜索

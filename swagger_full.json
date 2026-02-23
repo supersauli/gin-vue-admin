@@ -1,0 +1,1237 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "微信小游戏登录 API",
+    "version": "v1.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/api/v1/admin/currency/adjust": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "调整用户货币",
+        "operationId": "adminCurrency",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/api/v1/admin/gacha/import_heroes": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "导入英雄数据",
+        "operationId": "adminImportHeroes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {}
+          }
+        }
+      }
+    },
+    "/api/v1/admin/players": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取玩家列表（分页）",
+        "operationId": "adminGetPlayerList",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminGetPlayerListRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminGetPlayerListResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/players/create": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建玩家",
+        "operationId": "adminCreatePlayer",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminCreatePlayerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminCreatePlayerResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/players/delete": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除玩家",
+        "operationId": "adminDeletePlayer",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminDeletePlayerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminDeletePlayerResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/players/update": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "更新玩家数据",
+        "operationId": "adminUpdatePlayer",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminUpdatePlayerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminUpdatePlayerResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取用户列表（分页）",
+        "operationId": "adminGetUserList",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminGetPlayerListRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminGetUserListResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/create": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建用户",
+        "operationId": "adminCreateUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminCreateUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminCreateUserResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/delete": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "删除用户",
+        "operationId": "adminDeleteUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminDeleteUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminDeleteUserResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/update": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "更新用户信息",
+        "operationId": "adminUpdateUser",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminUpdateUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminUpdateUserResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "Login",
+        "operationId": "login",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh_token": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "RefreshToken",
+        "operationId": "refreshToken",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RefreshTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/RefreshTokenResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/game/get_player": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "GetGamePlayer",
+        "operationId": "getGamePlayer",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetGamePlayerResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/game/save_player": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "SaveGamePlayer",
+        "operationId": "saveGamePlayer",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SaveGamePlayerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/SaveGamePlayerResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/info": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "GetUserInfo",
+        "operationId": "getUserInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetUserInfoResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/profile": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "GetProfile",
+        "operationId": "getProfile",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetProfileResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/user/update_info": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "UpdateUserInfo",
+        "operationId": "updateUserInfo",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserInfoResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-date": "2026-02-22 11:40:58",
+  "x-description": "This is a goctl generated swagger file.",
+  "x-github": "https://github.com/zeromicro/go-zero",
+  "x-go-zero-doc": "https://go-zero.dev/",
+  "x-goctl-version": "1.9.2",
+  "definitions": {
+    "AdminGetPlayerListResponseListItem": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        },
+        "createdAt": {
+          "description": "创建时间",
+          "type": "integer"
+        },
+        "data": {
+          "description": "玩家数据",
+          "type": "string"
+        },
+        "id": {
+          "description": "玩家 ID",
+          "type": "integer"
+        },
+        "updatedAt": {
+          "description": "更新时间",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "accountId",
+        "data",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminGetPlayerListResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "description": "玩家列表",
+          "items": {
+            "$ref": "#/definitions/AdminGetPlayerListResponseListItem"
+          }
+        },
+        "total": {
+          "description": "总数",
+          "type": "integer"
+        }
+      }
+    },
+    "AdminGetPlayerListRequest": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "页码，默认 1",
+          "type": "integer"
+        },
+        "pageSize": {
+          "description": "每页数量，默认 20",
+          "type": "integer"
+        }
+      }
+    },
+    "AdminCreatePlayerResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "创建的玩家 ID",
+          "type": "integer"
+        }
+      }
+    },
+    "AdminCreatePlayerRequest": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        },
+        "data": {
+          "description": "玩家数据",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accountId",
+        "data"
+      ]
+    },
+    "AdminDeletePlayerResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminDeletePlayerRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "玩家 ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "AdminUpdatePlayerResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminUpdatePlayerRequest": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        },
+        "data": {
+          "description": "玩家数据",
+          "type": "string"
+        },
+        "id": {
+          "description": "玩家 ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "accountId",
+        "data"
+      ]
+    },
+    "AdminGetUserListResponseListItem": {
+      "type": "object",
+      "properties": {
+        "avatarUrl": {
+          "description": "头像 URL",
+          "type": "string"
+        },
+        "city": {
+          "description": "城市",
+          "type": "string"
+        },
+        "country": {
+          "description": "国家",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "创建时间",
+          "type": "integer"
+        },
+        "gender": {
+          "description": "性别",
+          "type": "integer"
+        },
+        "language": {
+          "description": "语言",
+          "type": "string"
+        },
+        "nickName": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "openId": {
+          "description": "用户 OpenID",
+          "type": "string"
+        },
+        "province": {
+          "description": "省份",
+          "type": "string"
+        },
+        "unionId": {
+          "description": "用户 UnionID",
+          "type": "string"
+        },
+        "updatedAt": {
+          "description": "更新时间",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "openId",
+        "unionId",
+        "nickName",
+        "avatarUrl",
+        "gender",
+        "city",
+        "province",
+        "country",
+        "language",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminGetUserListResponse": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "description": "用户列表",
+          "items": {
+            "$ref": "#/definitions/AdminGetUserListResponseListItem"
+          }
+        },
+        "total": {
+          "description": "总数",
+          "type": "integer"
+        }
+      }
+    },
+    "AdminCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "创建的账号 ID",
+          "type": "integer"
+        }
+      }
+    },
+    "AdminCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "avatarUrl": {
+          "description": "头像 URL",
+          "type": "string"
+        },
+        "city": {
+          "description": "城市",
+          "type": "string"
+        },
+        "country": {
+          "description": "国家",
+          "type": "string"
+        },
+        "gender": {
+          "description": "性别",
+          "type": "integer"
+        },
+        "language": {
+          "description": "语言",
+          "type": "string"
+        },
+        "nickName": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "openId": {
+          "description": "用户 OpenID",
+          "type": "string"
+        },
+        "province": {
+          "description": "省份",
+          "type": "string"
+        },
+        "unionId": {
+          "description": "用户 UnionID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "openId",
+        "unionId",
+        "nickName",
+        "avatarUrl",
+        "gender",
+        "city",
+        "province",
+        "country",
+        "language"
+      ]
+    },
+    "AdminDeleteUserResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminDeleteUserRequest": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "accountId"
+      ]
+    },
+    "AdminUpdateUserResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminUpdateUserRequest": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        },
+        "avatarUrl": {
+          "description": "头像 URL",
+          "type": "string"
+        },
+        "city": {
+          "description": "城市",
+          "type": "string"
+        },
+        "country": {
+          "description": "国家",
+          "type": "string"
+        },
+        "gender": {
+          "description": "性别",
+          "type": "integer"
+        },
+        "language": {
+          "description": "语言",
+          "type": "string"
+        },
+        "nickName": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "openId": {
+          "description": "用户 OpenID",
+          "type": "string"
+        },
+        "province": {
+          "description": "省份",
+          "type": "string"
+        },
+        "unionId": {
+          "description": "用户 UnionID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accountId",
+        "openId",
+        "unionId",
+        "nickName",
+        "avatarUrl",
+        "gender",
+        "city",
+        "province",
+        "country",
+        "language"
+      ]
+    },
+    "LoginResponseUserInfo": {
+      "type": "object",
+      "properties": {
+        "avatarUrl": {
+          "description": "头像 URL",
+          "type": "string"
+        },
+        "city": {
+          "description": "城市",
+          "type": "string"
+        },
+        "country": {
+          "description": "国家",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "创建时间",
+          "type": "integer"
+        },
+        "gender": {
+          "description": "性别",
+          "type": "integer"
+        },
+        "language": {
+          "description": "语言",
+          "type": "string"
+        },
+        "nickName": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "openId": {
+          "description": "用户 OpenID",
+          "type": "string"
+        },
+        "province": {
+          "description": "省份",
+          "type": "string"
+        },
+        "unionId": {
+          "description": "用户 UnionID",
+          "type": "string"
+        },
+        "updatedAt": {
+          "description": "更新时间",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "openId",
+        "unionId",
+        "nickName",
+        "avatarUrl",
+        "gender",
+        "city",
+        "province",
+        "country",
+        "language",
+        "createdAt",
+        "updatedAt"
+      ],
+      "description": "用户信息"
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "description": "刷新令牌",
+          "type": "string"
+        },
+        "token": {
+          "description": "JWT 令牌",
+          "type": "string"
+        },
+        "userInfo": {
+          "$ref": "#/definitions/LoginResponseUserInfo"
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "微信小游戏登录凭证",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "RefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "description": "JWT 令牌",
+          "type": "string"
+        },
+        "token": {
+          "description": "JWT 令牌",
+          "type": "string"
+        }
+      }
+    },
+    "RefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refreshToken": {
+          "description": "JWT 令牌",
+          "type": "string"
+        }
+      },
+      "required": [
+        "refreshToken"
+      ]
+    },
+    "GetGamePlayerResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "玩家数据",
+          "type": "string"
+        }
+      }
+    },
+    "SaveGamePlayerResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "状态码",
+          "type": "integer"
+        },
+        "data": {
+          "description": "数据",
+          "type": "string"
+        },
+        "message": {
+          "description": "消息",
+          "type": "string"
+        }
+      }
+    },
+    "SaveGamePlayerRequest": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "玩家数据",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "GetUserInfoResponseUserInfo": {
+      "type": "object",
+      "properties": {
+        "avatarUrl": {
+          "description": "头像 URL",
+          "type": "string"
+        },
+        "city": {
+          "description": "城市",
+          "type": "string"
+        },
+        "country": {
+          "description": "国家",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "创建时间",
+          "type": "integer"
+        },
+        "gender": {
+          "description": "性别",
+          "type": "integer"
+        },
+        "language": {
+          "description": "语言",
+          "type": "string"
+        },
+        "nickName": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "openId": {
+          "description": "用户 OpenID",
+          "type": "string"
+        },
+        "province": {
+          "description": "省份",
+          "type": "string"
+        },
+        "unionId": {
+          "description": "用户 UnionID",
+          "type": "string"
+        },
+        "updatedAt": {
+          "description": "更新时间",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "openId",
+        "unionId",
+        "nickName",
+        "avatarUrl",
+        "gender",
+        "city",
+        "province",
+        "country",
+        "language",
+        "createdAt",
+        "updatedAt"
+      ],
+      "description": "用户信息"
+    },
+    "GetUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "userInfo": {
+          "$ref": "#/definitions/GetUserInfoResponseUserInfo"
+        }
+      }
+    },
+    "GetProfileResponseUserInfo": {
+      "type": "object",
+      "properties": {
+        "avatarUrl": {
+          "description": "头像 URL",
+          "type": "string"
+        },
+        "city": {
+          "description": "城市",
+          "type": "string"
+        },
+        "country": {
+          "description": "国家",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "创建时间",
+          "type": "integer"
+        },
+        "gender": {
+          "description": "性别",
+          "type": "integer"
+        },
+        "language": {
+          "description": "语言",
+          "type": "string"
+        },
+        "nickName": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "openId": {
+          "description": "用户 OpenID",
+          "type": "string"
+        },
+        "province": {
+          "description": "省份",
+          "type": "string"
+        },
+        "unionId": {
+          "description": "用户 UnionID",
+          "type": "string"
+        },
+        "updatedAt": {
+          "description": "更新时间",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "openId",
+        "unionId",
+        "nickName",
+        "avatarUrl",
+        "gender",
+        "city",
+        "province",
+        "country",
+        "language",
+        "createdAt",
+        "updatedAt"
+      ],
+      "description": "用户信息"
+    },
+    "GetProfileResponse": {
+      "type": "object",
+      "properties": {
+        "userInfo": {
+          "$ref": "#/definitions/GetProfileResponseUserInfo"
+        }
+      }
+    },
+    "UpdateUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "状态码",
+          "type": "integer"
+        },
+        "data": {
+          "description": "数据",
+          "type": "string"
+        },
+        "message": {
+          "description": "消息",
+          "type": "string"
+        }
+      }
+    },
+    "UpdateUserInfoRequest": {
+      "type": "object",
+      "properties": {
+        "avatarUrl": {
+          "description": "头像 URL",
+          "type": "string"
+        },
+        "city": {
+          "description": "城市",
+          "type": "string"
+        },
+        "country": {
+          "description": "国家",
+          "type": "string"
+        },
+        "gender": {
+          "description": "性别",
+          "type": "integer"
+        },
+        "language": {
+          "description": "语言",
+          "type": "string"
+        },
+        "nickName": {
+          "description": "昵称",
+          "type": "string"
+        },
+        "openId": {
+          "description": "用户 OpenID",
+          "type": "string"
+        },
+        "province": {
+          "description": "省份",
+          "type": "string"
+        }
+      },
+      "required": [
+        "openId",
+        "nickName",
+        "avatarUrl",
+        "gender",
+        "city",
+        "province",
+        "country",
+        "language"
+      ]
+    }
+  }
+}

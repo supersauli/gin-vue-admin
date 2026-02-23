@@ -42,3 +42,21 @@ export function formatTimeToStr(times, pattern) {
   }
   return d.toLocaleString()
 }
+  // 使用原生 JS 处理
+export function formatSqlTimeToStr(row, column, cellValue) {
+    if (!cellValue) return '';
+    
+    // 1. 将字符串转为 Date 对象
+    const date = new Date(cellValue);
+    
+    // 2. 调整时区偏移（如果需要本地时间，通常直接转换即可）
+    // 这里简单处理为 YYYY-MM-DD HH:mm:ss
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }

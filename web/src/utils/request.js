@@ -101,7 +101,10 @@ service.interceptors.request.use(
     if (!config.donNotShowLoading) {
       showLoading(config.loadingOption)
     }
-    config.baseURL = config.baseURL || import.meta.env.VITE_BASE_API
+    // 只有当config.baseURL未设置时，才使用默认的VITE_BASE_API
+    if (!config.baseURL) {
+      config.baseURL = import.meta.env.VITE_BASE_API
+    }
     const userStore = useUserStore()
     config.headers = {
       'Content-Type': 'application/json',

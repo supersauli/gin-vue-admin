@@ -50,8 +50,8 @@ export default ({ mode }) => {
   const outDir = "dist"
 
   const config = {
-    base: base, // 编译后js导入的资源路径
-    root: root, // index.html文件所在位置
+    base: base, // 编译后 js 导入的资源路径
+    root: root, // index.html 文件所在位置
     publicDir: 'public', // 静态资源文件夹
     resolve: {
       alias
@@ -67,12 +67,13 @@ export default ({ mode }) => {
       }
     },
     server: {
-      // 如果使用docker-compose开发模式，设置为false
+      // 如果使用 docker-compose 开发模式，设置为 false
       open: true,
       port: process.env.VITE_CLI_PORT,
       proxy: {
-        // 把key的路径代理到target位置
+        // 把 key 的路径代理到 target 位置
         // detail: https://cli.vuejs.org/config/#devserver-proxy
+
         [process.env.VITE_BASE_API]: {
           // 需要代理的路径   例如 '/api'
           target: `${process.env.VITE_BASE_PATH}:${process.env.VITE_SERVER_PORT}/`, // 代理到 目标路径
@@ -90,13 +91,13 @@ export default ({ mode }) => {
       }
     },
     build: {
-      minify: 'terser', // 是否进行压缩,boolean | 'terser' | 'esbuild',默认使用terser
-      manifest: false, // 是否产出manifest.json
-      sourcemap: false, // 是否产出sourcemap.json
+      minify: 'terser', // 是否进行压缩,boolean | 'terser' | 'esbuild',默认使用 terser
+      manifest: false, // 是否产出 manifest.json
+      sourcemap: false, // 是否产出 sourcemap.json
       outDir: outDir, // 产出目录
       terserOptions: {
         compress: {
-          //生产环境时移除console
+          //生产环境时移除 console
           drop_console: true,
           drop_debugger: true
         }

@@ -46,3 +46,7 @@ type GetAuthorityId struct {
 }
 
 type Empty struct{}
+type RangeData struct {
+	BeginData string `json:"beginData"`
+	EndData   string `json:"endData"`
+}

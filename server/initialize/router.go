@@ -2,7 +2,10 @@ package initialize
 
 import (
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
+	"strings"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/docs"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
@@ -118,6 +121,12 @@ func Routers() *gin.Engine {
 
 	}
 
+	{
+		account := Router.Group("api/proxy").Use(middleware.OperationRecord())
+		account.POST("*", httpProxy)
+		account.GET("*", httpProxy)
+	}
+
 	//插件路由安装
 	InstallPlugin(PrivateGroup, PublicGroup, Router)
 
@@ -128,4 +137,25 @@ func Routers() *gin.Engine {
 
 	global.GVA_LOG.Info("router register success")
 	return Router
+}
+
+// 代理proxy
+func httpProxy(c *gin.Context) {
+	proxyUrl := c.Request.Header.Get("proxy")
+	c.Request.URL.Path = strings.TrimPrefix(c.Request.URL.Path, "/api/proxy")
+	target, err := url.Parse(proxyUrl)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// httputil.NewSingleHostReverseProxy 会自动处理目标地址的转发
+	proxy := httputil.NewSingleHostReverseProxy(target)
+
+	// 3. 注册路由，所有请求都交给 proxy 处理
+	// 这里的 "/" 意味着拦截所有请求
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// 直接调用代理的 ServeHTTP 方法进行转发
+		proxy.ServeHTTP(w, r)
+	})
+
 }

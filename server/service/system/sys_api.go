@@ -179,7 +179,7 @@ func (apiService *ApiService) DeleteApi(api system.SysApi) (err error) {
 //@param: api model.SysApi, info request.PageInfo, order string, desc bool
 //@return: list interface{}, total int64, err error
 
-func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.PageInfo, order string, desc bool) (list interface{}, total int64, err error) {
+func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.PageInfo, order string, desc bool, rangeData request.RangeData) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&system.SysApi{})
@@ -200,7 +200,9 @@ func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.Pag
 	if api.ApiGroup != "" {
 		db = db.Where("api_group = ?", api.ApiGroup)
 	}
-
+	if rangeData.BeginData != "" && rangeData.EndData != "" {
+		db = db.Where("updated_at BETWEEN ? AND ?", rangeData.BeginData, rangeData.EndData)
+	}
 	err = db.Count(&total).Error
 
 	if err != nil {
@@ -216,6 +218,7 @@ func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.Pag
 		orderMap["api_group"] = true
 		orderMap["description"] = true
 		orderMap["method"] = true
+		orderMap["updated_at"] = true
 		if !orderMap[order] {
 			err = fmt.Errorf("非法的排序字段: %v", order)
 			return apiList, total, err
