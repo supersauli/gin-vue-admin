@@ -11,7 +11,9 @@ export const formatBoolean = (bool) => {
 }
 export const formatDate = (time) => {
   if (time !== null && time !== '') {
-    var date = new Date(time)
+    // 如果时间戳小于 1e12（毫秒级约为 2749年），说明可能是秒级时间戳，需要乘以 1000
+    const timestamp = time < 1e12 ? time * 1000 : time
+    var date = new Date(timestamp)
     return formatTimeToStr(date, 'yyyy-MM-dd hh:mm:ss')
   } else {
     return ''

@@ -4,6 +4,7 @@ import { ElLoading, ElMessage } from 'element-plus'
 import { emitter } from '@/utils/bus'
 import router from '@/router/index'
 
+
 const service = axios.create({
   timeout: 99999
 })
@@ -95,6 +96,17 @@ const resetLoading = () => {
   }
 }
 
+// 使用 JSON.parse reviver 在解析时处理大整数
+const parseWithBigIntSupport = (text) => {
+  const reviver = (key, value) => {
+    if (typeof value === 'number' && value !== 0 && (value > Number.MAX_SAFE_INTEGER || value < Number.MIN_SAFE_INTEGER)) {
+      return value.toString()
+    }
+    return value
+  }
+  return JSON.parse(text, reviver)
+}
+
 // http request 拦截器
 service.interceptors.request.use(
   (config) => {
@@ -111,6 +123,10 @@ service.interceptors.request.use(
       'x-token': userStore.token,
       'x-user-id': userStore.userInfo.ID,
       ...config.headers
+    }
+    // 对于 admin 相关接口，标记需要处理大整数
+    if (config.url && config.url.includes('/api/v1/admin/')) {
+      config.headers['bigint-fields'] = 'true'
     }
     return config
   },
@@ -141,6 +157,20 @@ service.interceptors.response.use(
     if (response.headers['new-token']) {
       userStore.setToken(response.headers['new-token'])
     }
+    
+    // 检查请求头，确认需要特殊处理大整数
+    if (response.config.headers && response.config.headers['bigint-fields']) {
+      try {
+        // 使用原始响应文本，通过 reviver 处理大整数
+        if (response.request && response.request.responseText) {
+          const parsedData = parseWithBigIntSupport(response.request.responseText)
+          response.data = parsedData
+        }
+      } catch (e) {
+        console.warn('处理大整数时出错:', e)
+      }
+    }
+    
     if (typeof response.data.code === 'undefined') {
       return response
     }

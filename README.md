@@ -113,7 +113,10 @@ Gin-vue-admin 的成长离不开大家的支持，如果你愿意为 gin-vue-adm
 使用 `Goland` 等编辑工具，打开server目录，不可以打开 gin-vue-admin 根目录
 
 ```bash
-
+#初始化数据库页面
+```
+http://localhost:8080/#/init
+```
 # 克隆项目
 git clone https://github.com/flipped-aurora/gin-vue-admin.git
 # 进入server文件夹

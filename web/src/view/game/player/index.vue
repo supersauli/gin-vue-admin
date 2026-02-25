@@ -1,6 +1,28 @@
-
 <template>
   <div>
+    <div class="gva-search-box">
+      <el-form ref="searchForm" :inline="true" :model="searchInfo">
+        <el-form-item label="账号ID">
+          <el-input v-model="searchInfo.accountId" placeholder="账号ID" />
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="searchInfo.dateRange"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="YYYY-MM-DD HH:mm:ss"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="search" @click="onSubmit">
+            查询
+          </el-button>
+          <el-button icon="refresh" @click="onReset"> 重置 </el-button>
+        </el-form-item>
+      </el-form>
+    </div>
     <div class="gva-table-box">
       <div class="gva-btn-list">
         <el-select v-model="selectedGame" placeholder="请选择游戏" style="width: 200px; margin-right: 10px" @change="handleGameChange">
@@ -22,7 +44,17 @@
       >
         <el-table-column type="selection" width="55" />
         <el-table-column align="left" label="玩家ID" prop="id" width="120" />
-        <el-table-column align="left" label="账号ID" prop="accountId" width="120" />
+        <el-table-column align="left" label="账号ID" prop="accountId" width="180">
+          <template #default="scope">
+            <el-tooltip
+              :content="scope.row.accountId"
+              placement="top"
+              :disabled="!scope.row.accountId || scope.row.accountId.toString().length <= 15"
+            >
+              <span>{{ formatAccountId(scope.row.accountId) }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column align="left" label="创建时间" width="180">
           <template #default="scope">
             <span>{{ formatDate(scope.row.createdAt) }}</span>
@@ -117,12 +149,27 @@ const form = ref({
   data: ''
 })
 
+const searchInfo = ref({
+  accountId: '',
+  dateRange: []
+})
+
 const page = ref(1)
 const total = ref(0)
 const pageSize = ref(10)
 const tableData = ref([])
 const selectedGame = ref('')
 const gameOptions = ref([])
+
+// 格式化 accountId 显示，超过15位只显示前6位和后4位
+const formatAccountId = (accountId) => {
+  if (!accountId) return ''
+  const str = accountId.toString()
+  if (str.length > 15) {
+    return str.substring(0, 6) + '...' + str.substring(str.length - 4)
+  }
+  return str
+}
 
 // 获取游戏字典
 const getGameDict = async () => {
@@ -154,14 +201,41 @@ const handleCurrentChange = (val) => {
 }
 
 // 查询
+const onSubmit = () => {
+  page.value = 1
+  getTableData()
+}
+
+const onReset = () => {
+  searchInfo.value = {
+    accountId: '',
+    dateRange: []
+  }
+  getTableData()
+}
+
 const getTableData = async () => {
   if (!selectedGame.value) return
 
-  const table = await getPlayerList({
+  // 构建查询参数
+  const params = {
     page: page.value,
     pageSize: pageSize.value,
-    game: selectedGame.value
-  })
+    proxy: selectedGame.value
+  }
+
+  // 添加账号ID查询
+  if (searchInfo.value.accountId) {
+    params.accountId = searchInfo.value.accountId
+  }
+
+  // 添加时间范围查询（秒级时间戳）
+  if (searchInfo.value.dateRange && searchInfo.value.dateRange.length === 2) {
+    params.startTime = Math.floor(new Date(searchInfo.value.dateRange[0]).getTime() / 1000)
+    params.endTime = Math.floor(new Date(searchInfo.value.dateRange[1]).getTime() / 1000)
+  }
+
+  const table = await getPlayerList(params)
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -203,7 +277,7 @@ const deletePlayer = async (row) => {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(async () => {
-    const res = await deletePlayerApi({ id: row.id })
+    const res = await deletePlayerApi({ id: row.id, proxy: selectedGame.value })
     if (res.code === 0) {
       ElMessage({
         type: 'success',
@@ -222,12 +296,14 @@ const enterDrawer = async () => {
   switch (type.value) {
     case 'create':
       res = await createPlayer({
+        proxy: selectedGame.value,
         accountId: form.value.accountId,
         data: form.value.data
       })
       break
     case 'update':
       res = await updatePlayerApi({
+        proxy: selectedGame.value,
         id: form.value.id,
         accountId: form.value.accountId,
         data: form.value.data
@@ -235,6 +311,7 @@ const enterDrawer = async () => {
       break
     default:
       res = await createPlayer({
+        proxy: selectedGame.value,
         accountId: form.value.accountId,
         data: form.value.data
       })

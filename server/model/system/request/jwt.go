@@ -9,6 +9,7 @@ import (
 type CustomClaims struct {
 	BaseClaims
 	BufferTime int64
+	IsAdmin    bool `json:"isAdmin"`
 	jwt.RegisteredClaims
 }
 

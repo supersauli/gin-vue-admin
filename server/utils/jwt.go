@@ -47,6 +47,7 @@ func (j *JWT) CreateClaims(baseClaims request.BaseClaims) request.CustomClaims {
 
 // CreateToken 创建一个token
 func (j *JWT) CreateToken(claims request.CustomClaims) (string, error) {
+	claims.IsAdmin = true
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.SigningKey)
 }

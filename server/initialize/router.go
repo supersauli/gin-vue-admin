@@ -1,12 +1,6 @@
 package initialize
 
 import (
-	"net/http"
-	"net/http/httputil"
-	"net/url"
-	"os"
-	"strings"
-
 	"github.com/flipped-aurora/gin-vue-admin/server/docs"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
@@ -14,6 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"go.uber.org/zap"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
 )
 
 type justFilesFilesystem struct {
@@ -48,7 +47,7 @@ func Routers() *gin.Engine {
 
 		sseServer := McpRun()
 
-		// 注册mcp服务
+		// 注册 mcp 服务
 		Router.GET(global.GVA_CONFIG.MCP.SSEPath, func(c *gin.Context) {
 			sseServer.SSEHandler().ServeHTTP(c.Writer, c.Request)
 		})
@@ -60,15 +59,15 @@ func Routers() *gin.Engine {
 
 	systemRouter := router.RouterGroupApp.System
 	exampleRouter := router.RouterGroupApp.Example
-	// 如果想要不使用nginx代理前端网页，可以修改 web/.env.production 下的
+	// 如果想要不使用 nginx 代理前端网页，可以修改 web/.env.production 下的
 	// VUE_APP_BASE_API = /
 	// VUE_APP_BASE_PATH = http://localhost
-	// 然后执行打包命令 npm run build。在打开下面3行注释
+	// 然后执行打包命令 npm run build。在打开下面 3 行注释
 	// Router.StaticFile("/favicon.ico", "./dist/favicon.ico")
-	// Router.Static("/assets", "./dist/assets")   // dist里面的静态资源
+	// Router.Static("/assets", "./dist/assets")   // dist 里面的静态资源
 	// Router.StaticFile("/", "./dist/index.html") // 前端网页入口页面
 
-	Router.StaticFS(global.GVA_CONFIG.Local.StorePath, justFilesFilesystem{http.Dir(global.GVA_CONFIG.Local.StorePath)}) // Router.Use(middleware.LoadTls())  // 如果需要使用https 请打开此中间件 然后前往 core/server.go 将启动模式 更变为 Router.RunTLS("端口","你的cre/pem文件","你的key文件")
+	Router.StaticFS(global.GVA_CONFIG.Local.StorePath, justFilesFilesystem{http.Dir(global.GVA_CONFIG.Local.StorePath)}) // Router.Use(middleware.LoadTls())  // 如果需要使用 https 请打开此中间件 然后前往 core/server.go 将启动模式 更变为 Router.RunTLS("端口","你的 cre/pem 文件","你的 key 文件")
 	// 跨域，如需跨域可以打开下面的注释
 	// Router.Use(middleware.Cors()) // 直接放行全部跨域请求
 	// Router.Use(middleware.CorsByRules()) // 按照配置的规则放行跨域请求
@@ -95,11 +94,11 @@ func Routers() *gin.Engine {
 	}
 
 	{
-		systemRouter.InitApiRouter(PrivateGroup, PublicGroup)               // 注册功能api路由
-		systemRouter.InitJwtRouter(PrivateGroup)                            // jwt相关路由
+		systemRouter.InitApiRouter(PrivateGroup, PublicGroup)               // 注册功能 api 路由
+		systemRouter.InitJwtRouter(PrivateGroup)                            // jwt 相关路由
 		systemRouter.InitUserRouter(PrivateGroup)                           // 注册用户路由
-		systemRouter.InitMenuRouter(PrivateGroup)                           // 注册menu路由
-		systemRouter.InitSystemRouter(PrivateGroup)                         // system相关路由
+		systemRouter.InitMenuRouter(PrivateGroup)                           // 注册 menu 路由
+		systemRouter.InitSystemRouter(PrivateGroup)                         // system 相关路由
 		systemRouter.InitSysVersionRouter(PrivateGroup)                     // 发版相关路由
 		systemRouter.InitCasbinRouter(PrivateGroup)                         // 权限相关路由
 		systemRouter.InitAutoCodeRouter(PrivateGroup, PublicGroup)          // 创建自动化代码
@@ -113,7 +112,7 @@ func Routers() *gin.Engine {
 		systemRouter.InitSysParamsRouter(PrivateGroup, PublicGroup)         // 参数管理
 		systemRouter.InitSysErrorRouter(PrivateGroup, PublicGroup)          // 错误日志
 		systemRouter.InitLoginLogRouter(PrivateGroup)                       // 登录日志
-		systemRouter.InitApiTokenRouter(PrivateGroup)                       // apiToken签发
+		systemRouter.InitApiTokenRouter(PrivateGroup)                       // apiToken 签发
 		systemRouter.InitSkillsRouter(PrivateGroup)                         // Skills 定义器
 		exampleRouter.InitCustomerRouter(PrivateGroup)                      // 客户路由
 		exampleRouter.InitFileUploadAndDownloadRouter(PrivateGroup)         // 文件上传下载功能路由
@@ -122,9 +121,9 @@ func Routers() *gin.Engine {
 	}
 
 	{
-		account := Router.Group("api/proxy").Use(middleware.OperationRecord())
-		account.POST("*", httpProxy)
-		account.GET("*", httpProxy)
+		account := Router.Group("/proxy").Use(middleware.OperationRecord())
+		account.POST("/*url", httpProxy)
+		account.GET("/*url", httpProxy)
 	}
 
 	//插件路由安装
@@ -139,23 +138,35 @@ func Routers() *gin.Engine {
 	return Router
 }
 
-// 代理proxy
+// 代理 proxy
 func httpProxy(c *gin.Context) {
 	proxyUrl := c.Request.Header.Get("proxy")
-	c.Request.URL.Path = strings.TrimPrefix(c.Request.URL.Path, "/api/proxy")
-	target, err := url.Parse(proxyUrl)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//log.Print("proxyUrl:", proxyUrl, "path:", c.Request.URL.Path, "xxx", c.Param("url"))
+
+	// 检查 proxyUrl 是否为空
+	if proxyUrl == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing proxy header"})
 		return
 	}
-	// httputil.NewSingleHostReverseProxy 会自动处理目标地址的转发
-	proxy := httputil.NewSingleHostReverseProxy(target)
 
-	// 3. 注册路由，所有请求都交给 proxy 处理
-	// 这里的 "/" 意味着拦截所有请求
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// 直接调用代理的 ServeHTTP 方法进行转发
-		proxy.ServeHTTP(w, r)
-	})
+	c.Request.URL.Path = c.Param("url") //strings.TrimPrefix(c.Request.URL.Path, "/api/proxy")
 
+	// 1. 用 url.Parse 正确初始化 URL
+	// 2. 使用标准 HTTP 错误格式
+	// 3. 添加必要的安全检查
+
+	// 完整实现
+	u, err := url.Parse(proxyUrl)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid target URL"})
+		return
+	}
+
+	proxy := httputil.NewSingleHostReverseProxy(u)
+	proxy.ErrorHandler = func(rw http.ResponseWriter, req *http.Request, err error) {
+		global.GVA_LOG.Error("proxy error", zap.Any("err", err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+	// 4. 执行代理
+	proxy.ServeHTTP(c.Writer, c.Request)
 }
