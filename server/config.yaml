@@ -166,12 +166,12 @@ oracle:
     log-zap: false
 pgsql:
     prefix: ""
-    port: "5433"
-    config: sslmode=disable TimeZone=Asia/Shanghai
-    db-name: admin1
-    username: root
-    password: root
-    path: 192.168.1.39
+    port: "5432"
+    config: "sslmode=disable TimeZone=Asia/Shanghai"
+    db-name: "qmPlus"
+    username: "gva"
+    password: "Aa@6447985"
+    path: "pgsql"
     engine: ""
     log-mode: error
     max-idle-conns: 10
@@ -203,9 +203,9 @@ redis-list:
       db: 0
       useCluster: false
       clusterAddrs:
-        - 172.21.0.3:7000
-        - 172.21.0.4:7001
-        - 172.21.0.2:7002
+          - 172.21.0.3:7000
+          - 172.21.0.4:7001
+          - 172.21.0.2:7002
 sqlite:
     prefix: ""
     port: ""
@@ -241,7 +241,7 @@ tencent-cos:
     path-prefix: github.com/flipped-aurora/gin-vue-admin/server
 zap:
     level: info
-    prefix: '[github.com/flipped-aurora/gin-vue-admin/server]'
+    prefix: "[github.com/flipped-aurora/gin-vue-admin/server]"
     format: console
     director: log
     encode-level: LowercaseColorLevelEncoder

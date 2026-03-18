@@ -1,0 +1,92 @@
+
+networks:
+  gva-network:
+    driver: bridge
+
+volumes:
+  pgsql-data:
+  redis-data:
+
+services:
+  # 前端服务 - Vue3 + Nginx
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: gva-web
+    restart: always
+    ports:
+      - "${WEB_PORT:-8080}:8080"
+    depends_on:
+      - server
+    networks:
+      - gva-network
+
+  # 后端服务 - Go + Gin
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: gva-server
+    restart: always
+    ports:
+      - "${SERVER_PORT:-8888}:8888"
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - GIN_MODE=release
+    volumes:
+      - ./server/resource:/go/src/github.com/flipped-aurora/gin-vue-admin/server/resource
+      - ./server/uploads:/go/src/github.com/flipped-aurora/gin-vue-admin/server/uploads
+      - ./server/config.docker.yaml:/go/src/github.com/flipped-aurora/gin-vue-admin/server/config.docker.yaml
+    networks:
+      - gva-network
+
+  # PostgreSQL 数据库
+  pgsql:
+    image: postgres:15-alpine
+    container_name: gva-pgsql
+    restart: always
+    ports:
+      - "${PGSQL_PORT:-15432}:5432"
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-Aa@6447985}"
+      POSTGRES_DB: "${POSTGRES_DB:-qmPlus}"
+      POSTGRES_USER: "${POSTGRES_USER:-gva}"
+      TZ: "Asia/Shanghai"
+    command: >
+      postgres
+      -c timezone=Asia/Shanghai
+      -c log_timezone=Asia/Shanghai
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gva} -d ${POSTGRES_DB:-qmPlus}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    networks:
+      - gva-network
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: gva-redis
+    restart: always
+    ports:
+      - "${REDIS_PORT:-16379}:6379"
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - redis-data:/data
+    networks:
+      - gva-network

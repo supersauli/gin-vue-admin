@@ -1,25 +1,21 @@
-# 如果需要用 cicd ，请设置环境变量：
-# variables:
-#     DOCKER_BUILDKIT: 1
-
 FROM node:20-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-COPY . /app
+
+# 预先安装 Yarn 并启用 corepack
+RUN corepack enable && corepack prepare yarn@4.12.0 --activate
+
 WORKDIR /app
 
+# 先复制所有必要的文件
+COPY package.json yarn.lock* .yarnrc.yml ./
+COPY . .
 
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
+# 然后安装依赖
+RUN yarn install
 
-FROM base AS build
-COPY --from=prod-deps /app/node_modules /app/node_modules
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install && pnpm run build
-
+# 最后构建
+RUN yarn build
 
 FROM nginx:alpine
 LABEL MAINTAINER="bypanghu@163.com"
-COPY --from=base  /app/.docker-compose/nginx/conf.d/my.conf /etc/nginx/conf.d/my.conf
-COPY --from=build  /app/dist /usr/share/nginx/html
-RUN ls -al /usr/share/nginx/html
+COPY --from=base /app/.docker-compose/nginx/conf.d/my.conf /etc/nginx/conf.d/my.conf
+COPY --from=base /app/dist /usr/share/nginx/html

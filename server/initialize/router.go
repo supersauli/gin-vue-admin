@@ -150,7 +150,10 @@ func httpProxy(c *gin.Context) {
 	}
 
 	c.Request.URL.Path = c.Param("url") //strings.TrimPrefix(c.Request.URL.Path, "/api/proxy")
-
+	global.GVA_LOG.Info("proxy request",
+		zap.String("proxyUrl", proxyUrl),
+		zap.String("path", c.Request.URL.Path),
+		zap.Any("headers", c.Request.Header))
 	// 1. 用 url.Parse 正确初始化 URL
 	// 2. 使用标准 HTTP 错误格式
 	// 3. 添加必要的安全检查

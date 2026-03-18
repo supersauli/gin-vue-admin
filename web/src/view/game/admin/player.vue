@@ -54,13 +54,13 @@
               type="primary"
               link
               icon="edit"
-              @click="updatePlayer(scope.row)"
+              @click="openUpdateDialog(scope.row)"
             >编辑</el-button>
             <el-button
               type="primary"
               link
               icon="delete"
-              @click="deletePlayer(scope.row)"
+              @click="handleDeletePlayer(scope.row)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -259,7 +259,7 @@ const confirmPlayer = async () => {
   }
 }
 
-const updatePlayer = (row) => {
+const openUpdateDialog = (row) => {
   type.value = 'update'
   playerForm.value = {
     accountId: row.accountId.toString(),
@@ -268,7 +268,7 @@ const updatePlayer = (row) => {
   playerDialogVisible.value = true
 }
 
-const deletePlayer = async (row) => {
+const handleDeletePlayer = async (row) => {
   ElMessage.confirm('确定要删除吗?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',

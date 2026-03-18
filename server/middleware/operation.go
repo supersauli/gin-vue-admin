@@ -53,15 +53,16 @@ func OperationRecord() gin.HandlerFunc {
 			}
 			body, _ = json.Marshal(&m)
 		}
-		claims, _ := utils.GetClaims(c)
-		if claims != nil && claims.BaseClaims.ID != 0 {
+		claims, err := utils.GetClaims(c)
+		if err == nil && claims != nil && claims.BaseClaims.ID != 0 {
 			userId = int(claims.BaseClaims.ID)
 		} else {
 			id, err := strconv.Atoi(c.Request.Header.Get("x-user-id"))
 			if err != nil {
 				userId = 0
+			} else {
+				userId = id
 			}
-			userId = id
 		}
 		record := system.SysOperationRecord{
 			Ip:     c.ClientIP(),
@@ -112,8 +113,12 @@ func OperationRecord() gin.HandlerFunc {
 				record.Body = "超出记录长度"
 			}
 		}
-		if err := global.GVA_DB.Create(&record).Error; err != nil {
-			global.GVA_LOG.Error("create operation record error:", zap.Error(err))
+		if global.GVA_DB != nil {
+			if err := global.GVA_DB.Create(&record).Error; err != nil {
+				global.GVA_LOG.Error("create operation record error:", zap.Error(err))
+			}
+		} else {
+			global.GVA_LOG.Debug("create operation record skipped: database not initialized")
 		}
 	}
 }

@@ -1,14 +1,19 @@
 FROM golang:alpine as builder
 
 WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
-COPY . .
+
+# 先只复制依赖文件，利用 Docker 缓存避免每次重新下载包
+COPY go.mod go.sum ./
 
 RUN go env -w GO111MODULE=on \
     && go env -w GOPROXY=https://goproxy.cn,direct \
     && go env -w CGO_ENABLED=0 \
-    && go env \
-    && go mod tidy \
-    && go build -o server .
+    && go mod download
+
+# 再复制全部源码
+COPY . .
+
+RUN go build -o server .
 
 FROM alpine:latest
 
