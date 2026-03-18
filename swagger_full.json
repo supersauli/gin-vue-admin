@@ -10,13 +10,16 @@
   ],
   "swagger": "2.0",
   "info": {
-    "title": "微信小游戏登录 API",
+    "title": "微信小游戏登录 API + 游戏抽卡系统",
     "version": "v1.0"
   },
   "basePath": "/",
   "paths": {
     "/api/v1/admin/currency/adjust": {
       "post": {
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -25,28 +28,284 @@
         ],
         "summary": "调整用户货币",
         "operationId": "adminCurrency",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminCurrencyRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
-            "schema": {}
+            "schema": {
+              "$ref": "#/definitions/AdminCurrencyResponse"
+            }
           }
         }
       }
     },
-    "/api/v1/admin/gacha/import_heroes": {
-      "post": {
+    "/api/v1/admin/gacha/logs": {
+      "get": {
         "produces": [
           "application/json"
         ],
         "schemes": [
           "https"
         ],
-        "summary": "导入英雄数据",
-        "operationId": "adminImportHeroes",
+        "summary": "查询抽卡日志(支持按用户、卡池、时间筛选)",
+        "operationId": "adminGachaLogQuery",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "用户ID",
+            "name": "accountId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "卡池ID",
+            "name": "poolId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "开始时间",
+            "name": "startTime",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "结束时间",
+            "name": "endTime",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "页码，默认1",
+            "name": "page",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "每页大小，默认20",
+            "name": "pageSize",
+            "in": "query",
+            "allowEmptyValue": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
-            "schema": {}
+            "schema": {
+              "$ref": "#/definitions/AdminGachaLogQueryResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/gacha/rule": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "配置抽卡规则",
+        "operationId": "adminRuleManage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminRuleManageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminRuleManageResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/hero/attr": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "配置英雄属性",
+        "operationId": "adminHeroAttrManage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminHeroAttrManageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminHeroAttrManageResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/hero/import": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "批量导入英雄",
+        "operationId": "adminImportHeroes",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminImportHeroesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminImportHeroesResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/hero/manage": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建/更新英雄",
+        "operationId": "adminHeroManage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminHeroManageAdminImportHeroesRequestHeroesItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminHeroManageResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/item/manage": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建/更新道具",
+        "operationId": "adminItemManage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminItemManageAdminItemManageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminItemManageResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/npc/manage": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建/更新NPC",
+        "operationId": "adminNPCManage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminNPCManageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminNPCManageResponse"
+            }
           }
         }
       }
@@ -63,12 +322,37 @@
         "operationId": "adminGetPlayerList",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/AdminGetPlayerListRequest"
-            }
+            "type": "integer",
+            "description": "页码，默认 1",
+            "name": "page",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "每页数量，默认 20",
+            "name": "pageSize",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "账号 ID",
+            "name": "accountId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "startTime",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "endTime",
+            "in": "query",
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -180,6 +464,72 @@
         }
       }
     },
+    "/api/v1/admin/pool/manage": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "创建/更新卡池",
+        "operationId": "adminPoolManage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminPoolManageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminPoolManageResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/pool/prob": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "配置卡池概率",
+        "operationId": "adminProbManage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminProbManageRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/AdminProbManageResponse"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/users": {
       "get": {
         "produces": [
@@ -192,12 +542,37 @@
         "operationId": "adminGetUserList",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/AdminGetPlayerListRequest"
-            }
+            "type": "integer",
+            "description": "账号 ID",
+            "name": "accountId",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "页码，默认 1",
+            "name": "page",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "description": "每页数量，默认 20",
+            "name": "pageSize",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "startTime",
+            "in": "query",
+            "allowEmptyValue": true
+          },
+          {
+            "type": "integer",
+            "name": "endTime",
+            "in": "query",
+            "allowEmptyValue": true
           }
         ],
         "responses": {
@@ -295,7 +670,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AdminUpdateUserRequest"
+              "$ref": "#/definitions/AdminCreateUserRequest"
             }
           }
         ],
@@ -375,6 +750,109 @@
         }
       }
     },
+    "/api/v1/gacha/draw": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "执行抽卡 (单抽/十连抽)",
+        "operationId": "gachaDraw",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GachaDrawRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GachaDrawResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gacha/history": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取抽卡历史",
+        "operationId": "getGachaHistory",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdminDeleteUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetGachaHistoryResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gacha/pools": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取当前激活的卡池列表",
+        "operationId": "getGachaPools",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetGachaPoolsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gacha/statistics": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取抽卡统计",
+        "operationId": "getGachaStatistics",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetGachaStatisticsResponse"
+            }
+          }
+        }
+      }
+    },
     "/api/v1/game/get_player": {
       "get": {
         "produces": [
@@ -414,7 +892,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/SaveGamePlayerRequest"
+              "$ref": "#/definitions/AdminCreatePlayerRequest"
             }
           }
         ],
@@ -423,6 +901,205 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/SaveGamePlayerResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hero/equip": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "装备英雄",
+        "operationId": "equipHero",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EquipHeroRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/EquipHeroResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hero/list": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取可抽取的英雄列表",
+        "operationId": "getHeroList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetHeroListResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hero/my": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取用户拥有的英雄列表",
+        "operationId": "getUserHeroes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetUserHeroesResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hero/unequip": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "卸下英雄",
+        "operationId": "unequipHero",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EquipHeroRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UnequipHeroResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/hero/upgrade": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "升级英雄",
+        "operationId": "upgradeHero",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpgradeHeroRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UpgradeHeroResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/item/list": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取道具列表(所有道具定义)",
+        "operationId": "getItemList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetItemListResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/item/my": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取用户道具",
+        "operationId": "getUserItems",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetUserItemsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/npc/list": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "https"
+        ],
+        "summary": "获取NPC列表",
+        "operationId": "getNPCList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/GetNPCListResponse"
             }
           }
         }
@@ -502,12 +1179,558 @@
       }
     }
   },
-  "x-date": "2026-02-22 11:40:58",
+  "x-date": "2026-02-27 13:19:09",
   "x-description": "This is a goctl generated swagger file.",
   "x-github": "https://github.com/zeromicro/go-zero",
   "x-go-zero-doc": "https://go-zero.dev/",
   "x-goctl-version": "1.9.2",
   "definitions": {
+    "AdminCurrencyResponse": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "用户ID",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "货币类型",
+          "type": "string"
+        },
+        "newBalance": {
+          "description": "新余额",
+          "type": "number"
+        }
+      }
+    },
+    "AdminCurrencyRequest": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "用户ID",
+          "type": "integer"
+        },
+        "amount": {
+          "description": "调整数量(正数增加，负数减少)",
+          "type": "number"
+        },
+        "currency": {
+          "description": "货币类型",
+          "type": "string"
+        },
+        "reason": {
+          "description": "原因",
+          "type": "string"
+        }
+      },
+      "required": [
+        "accountId",
+        "currency",
+        "amount",
+        "reason"
+      ]
+    },
+    "AdminGachaLogQueryResponseLogsItem": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "description": "用户ID",
+          "type": "integer"
+        },
+        "costAmount": {
+          "description": "消耗数量",
+          "type": "number"
+        },
+        "costType": {
+          "description": "消耗类型",
+          "type": "string"
+        },
+        "drawTime": {
+          "description": "抽卡时间",
+          "type": "string"
+        },
+        "drawType": {
+          "description": "抽卡类型",
+          "type": "integer"
+        },
+        "heroId": {
+          "description": "抽到的英雄ID",
+          "type": "integer"
+        },
+        "heroName": {
+          "description": "英雄名称",
+          "type": "string"
+        },
+        "id": {
+          "description": "日志ID",
+          "type": "integer"
+        },
+        "isGuarantee": {
+          "description": "是否保底",
+          "type": "boolean"
+        },
+        "poolId": {
+          "description": "卡池ID",
+          "type": "integer"
+        },
+        "rarity": {
+          "description": "稀有度",
+          "type": "integer"
+        },
+        "status": {
+          "description": "状态",
+          "type": "integer"
+        },
+        "times": {
+          "description": "抽卡次数",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "accountId",
+        "poolId",
+        "drawType",
+        "times",
+        "costType",
+        "costAmount",
+        "heroId",
+        "heroName",
+        "rarity",
+        "isGuarantee",
+        "status",
+        "drawTime"
+      ]
+    },
+    "AdminGachaLogQueryResponse": {
+      "type": "object",
+      "properties": {
+        "logs": {
+          "type": "array",
+          "description": "日志列表",
+          "items": {
+            "$ref": "#/definitions/AdminGachaLogQueryResponseLogsItem"
+          }
+        },
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "size": {
+          "description": "每页大小",
+          "type": "integer"
+        },
+        "total": {
+          "description": "总数",
+          "type": "integer"
+        }
+      }
+    },
+    "AdminRuleManageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "消息",
+          "type": "string"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminRuleManageRequest": {
+      "type": "object",
+      "properties": {
+        "costAmount": {
+          "description": "消耗数量",
+          "type": "number"
+        },
+        "costCurrency": {
+          "description": "消耗货币类型",
+          "type": "string"
+        },
+        "dailyLimit": {
+          "description": "每日限制",
+          "type": "integer"
+        },
+        "discount": {
+          "description": "折扣",
+          "type": "number"
+        },
+        "drawType": {
+          "description": "抽卡类型 (1-单抽, 2-十连抽)",
+          "type": "integer"
+        },
+        "guaranteeDraws": {
+          "description": "保底抽数",
+          "type": "integer"
+        },
+        "guaranteeMaxRarity": {
+          "description": "保底最高稀有度",
+          "type": "integer"
+        },
+        "guaranteeRarity": {
+          "description": "保底稀有度",
+          "type": "integer"
+        },
+        "isActive": {
+          "description": "是否激活",
+          "type": "boolean"
+        },
+        "monthlyLimit": {
+          "description": "每月限制",
+          "type": "integer"
+        },
+        "poolId": {
+          "description": "卡池ID",
+          "type": "integer"
+        },
+        "ruleName": {
+          "description": "规则名称",
+          "type": "string"
+        },
+        "weeklyLimit": {
+          "description": "每周限制",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "poolId",
+        "ruleName",
+        "drawType",
+        "costCurrency",
+        "costAmount",
+        "discount",
+        "guaranteeRarity",
+        "guaranteeDraws",
+        "guaranteeMaxRarity",
+        "dailyLimit",
+        "weeklyLimit",
+        "monthlyLimit",
+        "isActive"
+      ]
+    },
+    "AdminHeroAttrManageResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "状态码",
+          "type": "integer"
+        },
+        "data": {
+          "description": "数据",
+          "type": "string"
+        },
+        "message": {
+          "description": "消息",
+          "type": "string"
+        }
+      }
+    },
+    "AdminHeroAttrManageRequest": {
+      "type": "object",
+      "properties": {
+        "attack": {
+          "description": "攻击力",
+          "type": "integer"
+        },
+        "critDamage": {
+          "description": "暴击伤害",
+          "type": "integer"
+        },
+        "critRate": {
+          "description": "暴击率",
+          "type": "integer"
+        },
+        "defense": {
+          "description": "防御力",
+          "type": "integer"
+        },
+        "extraAttrs": {
+          "description": "额外属性(JSON)",
+          "type": "string"
+        },
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        },
+        "hp": {
+          "description": "生命值",
+          "type": "integer"
+        },
+        "level": {
+          "description": "等级",
+          "type": "integer"
+        },
+        "skills": {
+          "description": "技能(JSON数组)",
+          "type": "string"
+        },
+        "speed": {
+          "description": "速度",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heroId",
+        "level",
+        "attack",
+        "defense",
+        "hp",
+        "speed",
+        "critRate",
+        "critDamage",
+        "skills",
+        "extraAttrs"
+      ]
+    },
+    "AdminImportHeroesResponse": {
+      "type": "object",
+      "properties": {
+        "failed": {
+          "description": "失败数",
+          "type": "integer"
+        },
+        "imported": {
+          "description": "成功数",
+          "type": "integer"
+        },
+        "total": {
+          "description": "总数",
+          "type": "integer"
+        }
+      }
+    },
+    "AdminHeroManageAdminImportHeroesRequestHeroesItem": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "description": "英雄属性(JSON)",
+          "type": "string"
+        },
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "imageUrl": {
+          "description": "图片URL",
+          "type": "string"
+        },
+        "isActive": {
+          "description": "是否在奖池中",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "英雄名称",
+          "type": "string"
+        },
+        "rarity": {
+          "description": "稀有度 (1-4)",
+          "type": "integer"
+        },
+        "weight": {
+          "description": "权重",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heroId",
+        "name",
+        "rarity",
+        "iconUrl",
+        "imageUrl",
+        "isActive",
+        "weight",
+        "attributes"
+      ]
+    },
+    "AdminImportHeroesRequest": {
+      "type": "object",
+      "properties": {
+        "heroes": {
+          "type": "array",
+          "description": "英雄列表",
+          "items": {
+            "$ref": "#/definitions/AdminImportHeroesRequestHeroesItem"
+          }
+        }
+      },
+      "required": [
+        "heroes"
+      ]
+    },
+    "AdminHeroManageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "消息",
+          "type": "string"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminItemManageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "消息",
+          "type": "string"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminItemManageAdminItemManageRequest": {
+      "type": "object",
+      "properties": {
+        "desc": {
+          "description": "道具描述",
+          "type": "string"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "isConsume": {
+          "description": "是否消耗品",
+          "type": "boolean"
+        },
+        "isSellable": {
+          "description": "是否可出售",
+          "type": "boolean"
+        },
+        "itemId": {
+          "description": "道具ID",
+          "type": "integer"
+        },
+        "maxStack": {
+          "description": "最大堆叠数",
+          "type": "integer"
+        },
+        "name": {
+          "description": "道具名称",
+          "type": "string"
+        },
+        "price": {
+          "description": "售价",
+          "type": "integer"
+        },
+        "rarity": {
+          "description": "稀有度",
+          "type": "integer"
+        },
+        "subType": {
+          "description": "子类型",
+          "type": "string"
+        },
+        "type": {
+          "description": "道具类型",
+          "type": "string"
+        },
+        "useLevel": {
+          "description": "使用等级限制",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "itemId",
+        "name",
+        "type",
+        "subType",
+        "desc",
+        "iconUrl",
+        "rarity",
+        "maxStack",
+        "useLevel",
+        "price",
+        "isSellable",
+        "isConsume"
+      ]
+    },
+    "AdminNPCManageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "消息",
+          "type": "string"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminNPCManageRequest": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "description": "属性(JSON)",
+          "type": "string"
+        },
+        "desc": {
+          "description": "描述",
+          "type": "string"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "isActive": {
+          "description": "是否激活",
+          "type": "boolean"
+        },
+        "level": {
+          "description": "等级",
+          "type": "integer"
+        },
+        "model": {
+          "description": "模型",
+          "type": "string"
+        },
+        "name": {
+          "description": "NPC名称",
+          "type": "string"
+        },
+        "npcId": {
+          "description": "NPC ID",
+          "type": "integer"
+        },
+        "skills": {
+          "description": "技能(JSON数组)",
+          "type": "string"
+        },
+        "subType": {
+          "description": "子类型",
+          "type": "string"
+        },
+        "type": {
+          "description": "NPC类型",
+          "type": "string"
+        }
+      },
+      "required": [
+        "npcId",
+        "name",
+        "type",
+        "subType",
+        "level",
+        "desc",
+        "iconUrl",
+        "model",
+        "attributes",
+        "skills",
+        "isActive"
+      ]
+    },
     "AdminGetPlayerListResponseListItem": {
       "type": "object",
       "properties": {
@@ -534,7 +1757,6 @@
       },
       "required": [
         "id",
-        "accountId",
         "data",
         "createdAt",
         "updatedAt"
@@ -552,19 +1774,6 @@
         },
         "total": {
           "description": "总数",
-          "type": "integer"
-        }
-      }
-    },
-    "AdminGetPlayerListRequest": {
-      "type": "object",
-      "properties": {
-        "page": {
-          "description": "页码，默认 1",
-          "type": "integer"
-        },
-        "pageSize": {
-          "description": "每页数量，默认 20",
           "type": "integer"
         }
       }
@@ -591,7 +1800,6 @@
         }
       },
       "required": [
-        "accountId",
         "data"
       ]
     },
@@ -643,13 +1851,131 @@
       },
       "required": [
         "id",
-        "accountId",
         "data"
+      ]
+    },
+    "AdminPoolManageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "消息",
+          "type": "string"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminPoolManageRequest": {
+      "type": "object",
+      "properties": {
+        "costAmount": {
+          "description": "单次抽卡消耗",
+          "type": "number"
+        },
+        "costCurrency": {
+          "description": "消耗货币类型",
+          "type": "string"
+        },
+        "description": {
+          "description": "卡池描述",
+          "type": "string"
+        },
+        "endTime": {
+          "description": "结束时间",
+          "type": "integer"
+        },
+        "isActive": {
+          "description": "是否激活",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "卡池名称",
+          "type": "string"
+        },
+        "poolId": {
+          "description": "卡池ID",
+          "type": "integer"
+        },
+        "probabilityJson": {
+          "description": "概率配置(JSON)",
+          "type": "string"
+        },
+        "startTime": {
+          "description": "开始时间",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "poolId",
+        "name",
+        "description",
+        "costCurrency",
+        "costAmount",
+        "probabilityJson",
+        "isActive",
+        "startTime",
+        "endTime"
+      ]
+    },
+    "AdminProbManageResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "消息",
+          "type": "string"
+        },
+        "success": {
+          "description": "是否成功",
+          "type": "boolean"
+        }
+      }
+    },
+    "AdminProbManageRequest": {
+      "type": "object",
+      "properties": {
+        "baseProb": {
+          "description": "基础概率 (%)",
+          "type": "number"
+        },
+        "heroIds": {
+          "description": "包含的英雄ID列表(JSON数组)",
+          "type": "string"
+        },
+        "isActive": {
+          "description": "是否激活",
+          "type": "boolean"
+        },
+        "poolId": {
+          "description": "卡池ID",
+          "type": "integer"
+        },
+        "rarity": {
+          "description": "稀有度 (1-4)",
+          "type": "integer"
+        },
+        "weight": {
+          "description": "权重",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "poolId",
+        "rarity",
+        "baseProb",
+        "weight",
+        "heroIds",
+        "isActive"
       ]
     },
     "AdminGetUserListResponseListItem": {
       "type": "object",
       "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        },
         "avatarUrl": {
           "description": "头像 URL",
           "type": "string"
@@ -696,6 +2022,7 @@
         }
       },
       "required": [
+        "accountId",
         "openId",
         "unionId",
         "nickName",
@@ -729,7 +2056,7 @@
       "type": "object",
       "properties": {
         "accountId": {
-          "description": "创建的账号 ID",
+          "description": "账号 ID",
           "type": "integer"
         }
       }
@@ -802,10 +2129,7 @@
           "description": "账号 ID",
           "type": "integer"
         }
-      },
-      "required": [
-        "accountId"
-      ]
+      }
     },
     "AdminUpdateUserResponse": {
       "type": "object",
@@ -816,66 +2140,13 @@
         }
       }
     },
-    "AdminUpdateUserRequest": {
+    "LoginResponseUserInfo": {
       "type": "object",
       "properties": {
         "accountId": {
           "description": "账号 ID",
           "type": "integer"
         },
-        "avatarUrl": {
-          "description": "头像 URL",
-          "type": "string"
-        },
-        "city": {
-          "description": "城市",
-          "type": "string"
-        },
-        "country": {
-          "description": "国家",
-          "type": "string"
-        },
-        "gender": {
-          "description": "性别",
-          "type": "integer"
-        },
-        "language": {
-          "description": "语言",
-          "type": "string"
-        },
-        "nickName": {
-          "description": "昵称",
-          "type": "string"
-        },
-        "openId": {
-          "description": "用户 OpenID",
-          "type": "string"
-        },
-        "province": {
-          "description": "省份",
-          "type": "string"
-        },
-        "unionId": {
-          "description": "用户 UnionID",
-          "type": "string"
-        }
-      },
-      "required": [
-        "accountId",
-        "openId",
-        "unionId",
-        "nickName",
-        "avatarUrl",
-        "gender",
-        "city",
-        "province",
-        "country",
-        "language"
-      ]
-    },
-    "LoginResponseUserInfo": {
-      "type": "object",
-      "properties": {
         "avatarUrl": {
           "description": "头像 URL",
           "type": "string"
@@ -922,6 +2193,7 @@
         }
       },
       "required": [
+        "accountId",
         "openId",
         "unionId",
         "nickName",
@@ -989,6 +2261,289 @@
         "refreshToken"
       ]
     },
+    "GachaDrawResponseCost": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "消耗数量",
+          "type": "number"
+        },
+        "id": {
+          "description": "物品ID (货币为0)",
+          "type": "integer"
+        },
+        "type": {
+          "description": "消耗类型: currency/item",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "amount"
+      ],
+      "description": "消耗信息"
+    },
+    "GachaDrawResponseResultsItem": {
+      "type": "object",
+      "properties": {
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "imageUrl": {
+          "description": "图片URL",
+          "type": "string"
+        },
+        "isGuarantee": {
+          "description": "是否保底获得",
+          "type": "boolean"
+        },
+        "isNew": {
+          "description": "是否新获得",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "英雄名称",
+          "type": "string"
+        },
+        "rarity": {
+          "description": "稀有度 (1-普通, 2-稀有, 3-史诗, 4-传说)",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heroId",
+        "name",
+        "rarity",
+        "iconUrl",
+        "imageUrl",
+        "isNew",
+        "isGuarantee"
+      ]
+    },
+    "GachaDrawResponse": {
+      "type": "object",
+      "properties": {
+        "cost": {
+          "$ref": "#/definitions/GachaDrawResponseCost"
+        },
+        "results": {
+          "type": "array",
+          "description": "抽卡结果列表",
+          "items": {
+            "$ref": "#/definitions/GachaDrawResponseResultsItem"
+          }
+        },
+        "total": {
+          "description": "总次数",
+          "type": "integer"
+        }
+      }
+    },
+    "GachaDrawRequest": {
+      "type": "object",
+      "properties": {
+        "itemId": {
+          "description": "消耗道具ID，0表示使用货币",
+          "type": "integer"
+        },
+        "poolId": {
+          "description": "卡池ID，0表示使用默认卡池",
+          "type": "integer"
+        },
+        "times": {
+          "description": "抽卡次数 (1-10)，1为单抽，10为十连抽",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "poolId",
+        "times",
+        "itemId"
+      ]
+    },
+    "GetGachaHistoryResponseRecordsItem": {
+      "type": "object",
+      "properties": {
+        "drawTime": {
+          "description": "抽卡时间",
+          "type": "string"
+        },
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        },
+        "id": {
+          "description": "记录ID",
+          "type": "integer"
+        },
+        "isGuarantee": {
+          "description": "是否保底",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "英雄名称",
+          "type": "string"
+        },
+        "poolId": {
+          "description": "卡池ID",
+          "type": "integer"
+        },
+        "rarity": {
+          "description": "稀有度",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "heroId",
+        "name",
+        "rarity",
+        "poolId",
+        "drawTime",
+        "isGuarantee"
+      ]
+    },
+    "GetGachaHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "description": "当前页码",
+          "type": "integer"
+        },
+        "records": {
+          "type": "array",
+          "description": "记录列表",
+          "items": {
+            "$ref": "#/definitions/GetGachaHistoryResponseRecordsItem"
+          }
+        },
+        "size": {
+          "description": "每页大小",
+          "type": "integer"
+        },
+        "total": {
+          "description": "总数",
+          "type": "integer"
+        }
+      }
+    },
+    "GetGachaPoolsResponsePoolsItemProbability": {
+      "type": "object",
+      "properties": {
+        "rarity1": {
+          "description": "普通概率 (%)",
+          "type": "number"
+        },
+        "rarity2": {
+          "description": "稀有概率 (%)",
+          "type": "number"
+        },
+        "rarity3": {
+          "description": "史诗概率 (%)",
+          "type": "number"
+        },
+        "rarity4": {
+          "description": "传说概率 (%)",
+          "type": "number"
+        }
+      },
+      "required": [
+        "rarity1",
+        "rarity2",
+        "rarity3",
+        "rarity4"
+      ],
+      "description": "概率配置"
+    },
+    "GetGachaPoolsResponsePoolsItem": {
+      "type": "object",
+      "properties": {
+        "costAmount": {
+          "description": "单次抽卡消耗",
+          "type": "number"
+        },
+        "costType": {
+          "description": "消耗类型",
+          "type": "string"
+        },
+        "description": {
+          "description": "卡池描述",
+          "type": "string"
+        },
+        "endTime": {
+          "description": "结束时间",
+          "type": "integer"
+        },
+        "isActive": {
+          "description": "是否激活",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "卡池名称",
+          "type": "string"
+        },
+        "poolId": {
+          "description": "卡池ID",
+          "type": "integer"
+        },
+        "probability": {
+          "$ref": "#/definitions/GetGachaPoolsResponsePoolsItemProbability"
+        },
+        "startTime": {
+          "description": "开始时间",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "poolId",
+        "name",
+        "description",
+        "costType",
+        "costAmount",
+        "isActive",
+        "startTime",
+        "endTime",
+        "probability"
+      ]
+    },
+    "GetGachaPoolsResponse": {
+      "type": "object",
+      "properties": {
+        "pools": {
+          "type": "array",
+          "description": "卡池列表",
+          "items": {
+            "$ref": "#/definitions/GetGachaPoolsResponsePoolsItem"
+          }
+        }
+      }
+    },
+    "GetGachaStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "counts": {
+          "description": "各稀有度数量统计",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "poolId": {
+          "description": "卡池ID",
+          "type": "integer"
+        },
+        "total": {
+          "description": "总抽卡数",
+          "type": "integer"
+        }
+      }
+    },
     "GetGamePlayerResponse": {
       "type": "object",
       "properties": {
@@ -1015,21 +2570,393 @@
         }
       }
     },
-    "SaveGamePlayerRequest": {
+    "EquipHeroResponse": {
       "type": "object",
       "properties": {
+        "code": {
+          "description": "状态码",
+          "type": "integer"
+        },
         "data": {
-          "description": "玩家数据",
+          "description": "数据",
+          "type": "string"
+        },
+        "message": {
+          "description": "消息",
+          "type": "string"
+        }
+      }
+    },
+    "EquipHeroRequest": {
+      "type": "object",
+      "properties": {
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heroId"
+      ]
+    },
+    "GetHeroListResponseHeroesItem": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "description": "英雄属性(JSON)",
+          "type": "string"
+        },
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "imageURL": {
+          "description": "图片URL",
+          "type": "string"
+        },
+        "isActive": {
+          "description": "是否在奖池中",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "英雄名称",
+          "type": "string"
+        },
+        "rarity": {
+          "description": "稀有度",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heroId",
+        "name",
+        "rarity",
+        "iconUrl",
+        "imageURL",
+        "isActive",
+        "attributes"
+      ]
+    },
+    "GetHeroListResponse": {
+      "type": "object",
+      "properties": {
+        "heroes": {
+          "type": "array",
+          "description": "英雄列表",
+          "items": {
+            "$ref": "#/definitions/GetHeroListResponseHeroesItem"
+          }
+        }
+      }
+    },
+    "GetUserHeroesResponseHeroesItem": {
+      "type": "object",
+      "properties": {
+        "exp": {
+          "description": "经验值",
+          "type": "integer"
+        },
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        },
+        "id": {
+          "description": "记录ID",
+          "type": "integer"
+        },
+        "isEquipped": {
+          "description": "是否已装备",
+          "type": "boolean"
+        },
+        "level": {
+          "description": "等级",
+          "type": "integer"
+        },
+        "name": {
+          "description": "英雄名称",
+          "type": "string"
+        },
+        "obtainTime": {
+          "description": "获取时间",
+          "type": "string"
+        },
+        "power": {
+          "description": "战力",
+          "type": "integer"
+        },
+        "rarity": {
+          "description": "稀有度",
+          "type": "integer"
+        },
+        "star": {
+          "description": "星级",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "heroId",
+        "name",
+        "rarity",
+        "level",
+        "star",
+        "exp",
+        "power",
+        "isEquipped",
+        "obtainTime"
+      ]
+    },
+    "GetUserHeroesResponse": {
+      "type": "object",
+      "properties": {
+        "heroes": {
+          "type": "array",
+          "description": "用户英雄列表",
+          "items": {
+            "$ref": "#/definitions/GetUserHeroesResponseHeroesItem"
+          }
+        }
+      }
+    },
+    "UnequipHeroResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "状态码",
+          "type": "integer"
+        },
+        "data": {
+          "description": "数据",
+          "type": "string"
+        },
+        "message": {
+          "description": "消息",
+          "type": "string"
+        }
+      }
+    },
+    "UpgradeHeroResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "状态码",
+          "type": "integer"
+        },
+        "data": {
+          "description": "数据",
+          "type": "string"
+        },
+        "message": {
+          "description": "消息",
+          "type": "string"
+        }
+      }
+    },
+    "UpgradeHeroRequest": {
+      "type": "object",
+      "properties": {
+        "exp": {
+          "description": "增加的经验值",
+          "type": "integer"
+        },
+        "heroId": {
+          "description": "英雄ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "heroId",
+        "exp"
+      ]
+    },
+    "GetItemListResponseItemsItem": {
+      "type": "object",
+      "properties": {
+        "desc": {
+          "description": "道具描述",
+          "type": "string"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "itemId": {
+          "description": "道具ID",
+          "type": "integer"
+        },
+        "maxStack": {
+          "description": "最大堆叠数",
+          "type": "integer"
+        },
+        "name": {
+          "description": "道具名称",
+          "type": "string"
+        },
+        "rarity": {
+          "description": "稀有度",
+          "type": "integer"
+        },
+        "subType": {
+          "description": "子类型",
+          "type": "string"
+        },
+        "type": {
+          "description": "道具类型",
           "type": "string"
         }
       },
       "required": [
-        "data"
+        "itemId",
+        "name",
+        "type",
+        "subType",
+        "desc",
+        "iconUrl",
+        "rarity",
+        "maxStack"
       ]
+    },
+    "GetItemListResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "道具列表",
+          "items": {
+            "$ref": "#/definitions/GetItemListResponseItemsItem"
+          }
+        }
+      }
+    },
+    "GetUserItemsResponseItemsItem": {
+      "type": "object",
+      "properties": {
+        "expireTime": {
+          "description": "过期时间",
+          "type": "string"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "itemId": {
+          "description": "道具ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "道具名称",
+          "type": "string"
+        },
+        "quantity": {
+          "description": "数量",
+          "type": "integer"
+        },
+        "type": {
+          "description": "道具类型",
+          "type": "string"
+        }
+      },
+      "required": [
+        "itemId",
+        "name",
+        "type",
+        "quantity",
+        "iconUrl",
+        "expireTime"
+      ]
+    },
+    "GetUserItemsResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "用户道具列表",
+          "items": {
+            "$ref": "#/definitions/GetUserItemsResponseItemsItem"
+          }
+        }
+      }
+    },
+    "GetNPCListResponseNpcsItem": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "description": "属性(JSON)",
+          "type": "string"
+        },
+        "desc": {
+          "description": "描述",
+          "type": "string"
+        },
+        "iconUrl": {
+          "description": "图标URL",
+          "type": "string"
+        },
+        "level": {
+          "description": "等级",
+          "type": "integer"
+        },
+        "model": {
+          "description": "模型",
+          "type": "string"
+        },
+        "name": {
+          "description": "NPC名称",
+          "type": "string"
+        },
+        "npcId": {
+          "description": "NPC ID",
+          "type": "integer"
+        },
+        "skills": {
+          "description": "技能(JSON数组)",
+          "type": "string"
+        },
+        "subType": {
+          "description": "子类型",
+          "type": "string"
+        },
+        "type": {
+          "description": "NPC类型",
+          "type": "string"
+        }
+      },
+      "required": [
+        "npcId",
+        "name",
+        "type",
+        "subType",
+        "level",
+        "desc",
+        "iconUrl",
+        "model",
+        "attributes",
+        "skills"
+      ]
+    },
+    "GetNPCListResponse": {
+      "type": "object",
+      "properties": {
+        "npcs": {
+          "type": "array",
+          "description": "NPC列表",
+          "items": {
+            "$ref": "#/definitions/GetNPCListResponseNpcsItem"
+          }
+        }
+      }
     },
     "GetUserInfoResponseUserInfo": {
       "type": "object",
       "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        },
         "avatarUrl": {
           "description": "头像 URL",
           "type": "string"
@@ -1076,6 +3003,7 @@
         }
       },
       "required": [
+        "accountId",
         "openId",
         "unionId",
         "nickName",
@@ -1101,6 +3029,10 @@
     "GetProfileResponseUserInfo": {
       "type": "object",
       "properties": {
+        "accountId": {
+          "description": "账号 ID",
+          "type": "integer"
+        },
         "avatarUrl": {
           "description": "头像 URL",
           "type": "string"
@@ -1147,6 +3079,7 @@
         }
       },
       "required": [
+        "accountId",
         "openId",
         "unionId",
         "nickName",
