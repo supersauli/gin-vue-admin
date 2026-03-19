@@ -2,11 +2,18 @@
   <div>
     <div class="gva-search-box">
       <el-form ref="searchForm" :inline="true" :model="searchInfo">
-        <el-form-item label="玩家ID">
-          <el-input v-model="searchInfo.id" placeholder="玩家ID" />
-        </el-form-item>
         <el-form-item label="账号ID">
           <el-input v-model="searchInfo.accountId" placeholder="账号ID" />
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="searchInfo.dateRange"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="YYYY-MM-DD HH:mm:ss"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">
@@ -26,7 +33,7 @@
             :value="item.value"
           />
         </el-select>
-        <el-button type="primary" icon="plus" @click="openPlayerDialog">创建玩家</el-button>
+        <el-button type="primary" icon="plus" @click="openDrawer">新增玩家</el-button>
       </div>
       <el-table
         ref="multipleTable"
@@ -35,8 +42,19 @@
         tooltip-effect="dark"
         row-key="id"
       >
-        <el-table-column align="left" label="玩家ID" prop="id" width="100" />
-        <el-table-column align="left" label="账号ID" prop="accountId" width="120" />
+        <el-table-column type="selection" width="55" />
+        <el-table-column align="left" label="玩家ID" prop="id" width="120" />
+        <el-table-column align="left" label="账号ID" prop="accountId" width="180">
+          <template #default="scope">
+            <el-tooltip
+              :content="scope.row.accountId"
+              placement="top"
+              :disabled="!scope.row.accountId || scope.row.accountId.toString().length <= 15"
+            >
+              <span>{{ formatAccountId(scope.row.accountId) }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column align="left" label="创建时间" width="180">
           <template #default="scope">
             <span>{{ formatDate(scope.row.createdAt) }}</span>
@@ -47,20 +65,20 @@
             <span>{{ formatDate(scope.row.updatedAt) }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="玩家数据" prop="data" width="200" show-overflow-tooltip />
+        <el-table-column align="left" label="玩家数据" prop="data" min-width="200" show-overflow-tooltip />
         <el-table-column align="left" label="操作" min-width="160" fixed="right">
           <template #default="scope">
             <el-button
               type="primary"
               link
               icon="edit"
-              @click="openUpdateDialog(scope.row)"
+              @click="updatePlayer(scope.row)"
             >编辑</el-button>
             <el-button
               type="primary"
               link
               icon="delete"
-              @click="handleDeletePlayer(scope.row)"
+              @click="deletePlayer(scope.row)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -78,27 +96,31 @@
       </div>
     </div>
     <el-drawer
-      v-model="playerDialogVisible"
-      :before-close="closePlayerDialog"
+      v-model="drawerFormVisible"
+      :before-close="closeDrawer"
       :show-close="false"
-      size="60%"
+      size="40%"
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">{{ type === 'create' ? '创建玩家' : '编辑玩家' }}</span>
+          <span class="text-lg">{{ type === 'create' ? '新增玩家' : '编辑玩家' }}</span>
           <div>
-            <el-button @click="closePlayerDialog">取 消</el-button>
-            <el-button type="primary" @click="confirmPlayer">确 定</el-button>
+            <el-button @click="closeDrawer">取 消</el-button>
+            <el-button type="primary" @click="enterDrawer">确 定</el-button>
           </div>
         </div>
       </template>
-      <el-form :model="playerForm" label-width="120px">
+      <el-form :model="form" label-width="100px">
         <el-form-item label="账号ID">
-          <el-input v-model="playerForm.accountId" autocomplete="off" />
+          <el-input v-model="form.accountId" autocomplete="off" :disabled="type === 'update'" />
         </el-form-item>
         <el-form-item label="玩家数据">
-          <el-input v-model="playerForm.data" autocomplete="off" type="textarea" />
-          <p class="text-sm text-gray-500">JSON格式</p>
+          <el-input
+            v-model="form.data"
+            type="textarea"
+            :rows="10"
+            autocomplete="off"
+          />
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -106,15 +128,30 @@
 </template>
 
 <script setup>
+import {
+  createPlayer,
+  updatePlayer as updatePlayerApi,
+  deletePlayer as deletePlayerApi,
+  getPlayerList
+} from '@/api/player'
 import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import { getDict } from '@/utils/dictionary'
-import { getPlayerList, createPlayer, updatePlayer, deletePlayer } from '@/api/admin'
+
+defineOptions({
+  name: 'PlayerManage'
+})
+
+const form = ref({
+  id: 0,
+  accountId: 0,
+  data: ''
+})
 
 const searchInfo = ref({
-  id: '',
-  accountId: ''
+  accountId: '',
+  dateRange: []
 })
 
 const page = ref(1)
@@ -124,12 +161,15 @@ const tableData = ref([])
 const selectedGame = ref('')
 const gameOptions = ref([])
 
-const playerDialogVisible = ref(false)
-const type = ref('')
-const playerForm = ref({
-  accountId: '',
-  data: ''
-})
+// 格式化 accountId 显示，超过15位只显示前6位和后4位
+const formatAccountId = (accountId) => {
+  if (!accountId) return ''
+  const str = accountId.toString()
+  if (str.length > 15) {
+    return str.substring(0, 6) + '...' + str.substring(str.length - 4)
+  }
+  return str
+}
 
 // 获取游戏字典
 const getGameDict = async () => {
@@ -168,8 +208,8 @@ const onSubmit = () => {
 
 const onReset = () => {
   searchInfo.value = {
-    id: '',
-    accountId: ''
+    accountId: '',
+    dateRange: []
   }
   getTableData()
 }
@@ -184,14 +224,15 @@ const getTableData = async () => {
     proxy: selectedGame.value
   }
 
-  // 添加玩家ID查询
-  if (searchInfo.value.id) {
-    params.id = parseInt(searchInfo.value.id)
-  }
-
   // 添加账号ID查询
   if (searchInfo.value.accountId) {
-    params.accountId = parseInt(searchInfo.value.accountId)
+    params.accountId = searchInfo.value.accountId
+  }
+
+  // 添加时间范围查询（秒级时间戳）
+  if (searchInfo.value.dateRange && searchInfo.value.dateRange.length === 2) {
+    params.startTime = Math.floor(new Date(searchInfo.value.dateRange[0]).getTime() / 1000)
+    params.endTime = Math.floor(new Date(searchInfo.value.dateRange[1]).getTime() / 1000)
   }
 
   const table = await getPlayerList(params)
@@ -208,98 +249,89 @@ getGameDict().then(() => {
   getTableData()
 })
 
-const openPlayerDialog = () => {
-  type.value = 'create'
-  playerDialogVisible.value = true
+const drawerFormVisible = ref(false)
+const type = ref('')
+
+const updatePlayer = async (row) => {
+  type.value = 'update'
+  form.value = {
+    id: row.id,
+    accountId: row.accountId,
+    data: row.data
+  }
+  drawerFormVisible.value = true
 }
 
-const closePlayerDialog = () => {
-  playerDialogVisible.value = false
-  playerForm.value = {
-    accountId: '',
+const closeDrawer = () => {
+  drawerFormVisible.value = false
+  form.value = {
+    id: 0,
+    accountId: 0,
     data: ''
   }
 }
 
-const confirmPlayer = async () => {
-  if (!playerForm.value.accountId || !playerForm.value.data) {
-    ElMessage.error('请填写完整信息')
-    return
-  }
+const deletePlayer = async (row) => {
+  ElMessageBox.confirm('确定要删除吗?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    const res = await deletePlayerApi({ id: row.id, proxy: selectedGame.value })
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: '删除成功'
+      })
+      if (tableData.value.length === 1 && page.value > 1) {
+        page.value--
+      }
+      getTableData()
+    }
+  })
+}
 
+const enterDrawer = async () => {
   let res
   switch (type.value) {
     case 'create':
       res = await createPlayer({
         proxy: selectedGame.value,
-        accountId: parseInt(playerForm.value.accountId),
-        data: playerForm.value.data
+        accountId: form.value.accountId,
+        data: form.value.data
       })
       break
     case 'update':
-      res = await updatePlayer({
+      res = await updatePlayerApi({
         proxy: selectedGame.value,
-        accountId: parseInt(playerForm.value.accountId),
-        data: playerForm.value.data
+        id: form.value.id,
+        accountId: form.value.accountId,
+        data: form.value.data
       })
       break
     default:
       res = await createPlayer({
         proxy: selectedGame.value,
-        accountId: parseInt(playerForm.value.accountId),
-        data: playerForm.value.data
+        accountId: form.value.accountId,
+        data: form.value.data
       })
       break
   }
 
   if (res.code === 0) {
-    ElMessage.success(type.value === 'create' ? '创建成功' : '更新成功')
-    closePlayerDialog()
+    ElMessage({
+      type: 'success',
+      message: type.value === 'create' ? '创建成功' : '更新成功'
+    })
+    closeDrawer()
     getTableData()
   }
 }
 
-const openUpdateDialog = (row) => {
-  type.value = 'update'
-  playerForm.value = {
-    accountId: row.accountId.toString(),
-    data: row.data
-  }
-  playerDialogVisible.value = true
-}
-
-const handleDeletePlayer = async (row) => {
-  ElMessage.confirm('确定要删除吗?', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(async () => {
-    const res = await deletePlayer({
-      proxy: selectedGame.value,
-      id: row.id
-    })
-    if (res.code === 0) {
-      ElMessage.success('删除成功')
-      getTableData()
-    }
-  })
+const openDrawer = () => {
+  type.value = 'create'
+  drawerFormVisible.value = true
 }
 </script>
 
-<style scoped>
-.text-sm {
-  font-size: 0.875rem;
-}
-.text-gray-500 {
-  color: #6b7280;
-}
-.flex {
-  display: flex;
-}
-.justify-between {
-  justify-content: space-between;
-}
-.items-center {
-  align-items: center;
-}
-</style>
+<style></style>

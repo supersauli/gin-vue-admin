@@ -1,6 +1,16 @@
 
 <template>
   <div>
+    <div class="gva-form-box" style="margin-bottom: 20px;">
+      <el-select v-model="selectedGame" placeholder="请选择游戏" style="width: 200px;" @change="handleGameChange">
+        <el-option
+          v-for="item in gameOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </div>
     <el-tabs v-model="activeTab" type="border-card">
       <el-tab-pane label="货币调整" name="currency">
         <div class="gva-form-box">
@@ -55,12 +65,32 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { adjustCurrency, importHeroes } from '@/api/gameAdmin'
+import { getDict } from '@/utils/dictionary'
 
 defineOptions({
   name: 'GameAdmin'
 })
 
 const activeTab = ref('currency')
+const selectedGame = ref('')
+const gameOptions = ref([])
+
+// 获取游戏字典
+const getGameDict = async () => {
+  const dict = await getDict('game')
+  gameOptions.value = dict
+  if (dict.length > 0 && !selectedGame.value) {
+    selectedGame.value = dict[0].value
+  }
+}
+
+// 游戏切换处理
+const handleGameChange = () => {
+  // 游戏切换时可以刷新数据或执行其他操作
+}
+
+// 初始化时加载游戏字典
+getGameDict()
 
 // 货币调整表单
 const currencyForm = ref({
@@ -82,8 +112,14 @@ const handleAdjustCurrency = async () => {
     return
   }
 
+  if (!selectedGame.value) {
+    ElMessage.error('请选择游戏')
+    return
+  }
+
   try {
     const res = await adjustCurrency({
+      game: selectedGame.value,
       accountId: currencyForm.value.accountId,
       currencyType: currencyForm.value.currencyType,
       amount: currencyForm.value.amount,
@@ -118,6 +154,11 @@ const handleImportHeroes = async () => {
     return
   }
 
+  if (!selectedGame.value) {
+    ElMessage.error('请选择游戏')
+    return
+  }
+
   try {
     // 验证JSON格式
     JSON.parse(heroesForm.value.data)
@@ -128,6 +169,7 @@ const handleImportHeroes = async () => {
 
   try {
     const res = await importHeroes({
+      game: selectedGame.value,
       data: heroesForm.value.data
     })
 

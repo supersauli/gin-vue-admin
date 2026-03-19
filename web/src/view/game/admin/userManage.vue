@@ -5,15 +5,8 @@
         <el-form-item label="账号ID">
           <el-input v-model="searchInfo.accountId" placeholder="账号ID" />
         </el-form-item>
-        <el-form-item label="创建时间">
-          <el-date-picker
-            v-model="searchInfo.dateRange"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            value-format="YYYY-MM-DD HH:mm:ss"
-          />
+        <el-form-item label="OpenID">
+          <el-input v-model="searchInfo.openId" placeholder="OpenID" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="search" @click="onSubmit">
@@ -33,17 +26,16 @@
             :value="item.value"
           />
         </el-select>
-        <el-button type="primary" icon="plus" @click="openDrawer">新增玩家</el-button>
+        <el-button type="primary" icon="plus" @click="openDrawer">新增用户</el-button>
       </div>
       <el-table
         ref="multipleTable"
         :data="tableData"
         style="width: 100%"
         tooltip-effect="dark"
-        row-key="id"
+        row-key="openId"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="玩家ID" prop="id" width="120" />
         <el-table-column align="left" label="账号ID" prop="accountId" width="180">
           <template #default="scope">
             <el-tooltip
@@ -55,6 +47,22 @@
             </el-tooltip>
           </template>
         </el-table-column>
+        <el-table-column align="left" label="OpenID" prop="openId" width="220" show-overflow-tooltip />
+        <el-table-column align="left" label="昵称" prop="nickName" width="120" />
+        <el-table-column align="left" label="头像" width="80">
+          <template #default="scope">
+            <el-avatar :src="scope.row.avatarUrl" />
+          </template>
+        </el-table-column>
+        <el-table-column align="left" label="性别" prop="gender" width="80">
+          <template #default="scope">
+            <span>{{ scope.row.gender === 1 ? '男' : scope.row.gender === 2 ? '女' : '未知' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="left" label="国家" prop="country" width="100" />
+        <el-table-column align="left" label="省份" prop="province" width="100" />
+        <el-table-column align="left" label="城市" prop="city" width="100" />
+        <el-table-column align="left" label="语言" prop="language" width="100" />
         <el-table-column align="left" label="创建时间" width="180">
           <template #default="scope">
             <span>{{ formatDate(scope.row.createdAt) }}</span>
@@ -65,20 +73,19 @@
             <span>{{ formatDate(scope.row.updatedAt) }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="玩家数据" prop="data" min-width="200" show-overflow-tooltip />
         <el-table-column align="left" label="操作" min-width="160" fixed="right">
           <template #default="scope">
             <el-button
               type="primary"
               link
               icon="edit"
-              @click="updatePlayer(scope.row)"
+              @click="updateUser(scope.row)"
             >编辑</el-button>
             <el-button
               type="primary"
               link
               icon="delete"
-              @click="deletePlayer(scope.row)"
+              @click="deleteUser(scope.row)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -103,7 +110,7 @@
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <span class="text-lg">{{ type === 'create' ? '新增玩家' : '编辑玩家' }}</span>
+          <span class="text-lg">{{ type === 'create' ? '新增用户' : '编辑用户' }}</span>
           <div>
             <el-button @click="closeDrawer">取 消</el-button>
             <el-button type="primary" @click="enterDrawer">确 定</el-button>
@@ -114,13 +121,36 @@
         <el-form-item label="账号ID">
           <el-input v-model="form.accountId" autocomplete="off" :disabled="type === 'update'" />
         </el-form-item>
-        <el-form-item label="玩家数据">
-          <el-input
-            v-model="form.data"
-            type="textarea"
-            :rows="10"
-            autocomplete="off"
-          />
+        <el-form-item label="OpenID">
+          <el-input v-model="form.openId" autocomplete="off" :disabled="type === 'update'" />
+        </el-form-item>
+        <el-form-item label="UnionID">
+          <el-input v-model="form.unionId" autocomplete="off" :disabled="type === 'update'" />
+        </el-form-item>
+        <el-form-item label="昵称">
+          <el-input v-model="form.nickName" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="头像URL">
+          <el-input v-model="form.avatarUrl" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-select v-model="form.gender" placeholder="请选择性别">
+            <el-option label="未知" :value="0" />
+            <el-option label="男" :value="1" />
+            <el-option label="女" :value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="国家">
+          <el-input v-model="form.country" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="省份">
+          <el-input v-model="form.province" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="城市">
+          <el-input v-model="form.city" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="语言">
+          <el-input v-model="form.language" autocomplete="off" />
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -129,29 +159,36 @@
 
 <script setup>
 import {
-  createPlayer,
-  updatePlayer as updatePlayerApi,
-  deletePlayer as deletePlayerApi,
-  getPlayerList
-} from '@/api/player'
+  createUser,
+  updateUser as updateUserApi,
+  deleteUser as deleteUserApi,
+  getUserList
+} from '@/api/gameUser'
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import { getDict } from '@/utils/dictionary'
 
 defineOptions({
-  name: 'Player'
+  name: 'UserManage'
 })
 
 const form = ref({
-  id: 0,
   accountId: 0,
-  data: ''
+  openId: '',
+  unionId: '',
+  nickName: '',
+  avatarUrl: '',
+  gender: 0,
+  country: '',
+  province: '',
+  city: '',
+  language: ''
 })
 
 const searchInfo = ref({
   accountId: '',
-  dateRange: []
+  openId: ''
 })
 
 const page = ref(1)
@@ -209,7 +246,7 @@ const onSubmit = () => {
 const onReset = () => {
   searchInfo.value = {
     accountId: '',
-    dateRange: []
+    openId: ''
   }
   getTableData()
 }
@@ -229,13 +266,12 @@ const getTableData = async () => {
     params.accountId = searchInfo.value.accountId
   }
 
-  // 添加时间范围查询（秒级时间戳）
-  if (searchInfo.value.dateRange && searchInfo.value.dateRange.length === 2) {
-    params.startTime = Math.floor(new Date(searchInfo.value.dateRange[0]).getTime() / 1000)
-    params.endTime = Math.floor(new Date(searchInfo.value.dateRange[1]).getTime() / 1000)
+  // 添加OpenID查询
+  if (searchInfo.value.openId) {
+    params.openId = searchInfo.value.openId
   }
 
-  const table = await getPlayerList(params)
+  const table = await getUserList(params)
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -252,12 +288,19 @@ getGameDict().then(() => {
 const drawerFormVisible = ref(false)
 const type = ref('')
 
-const updatePlayer = async (row) => {
+const updateUser = async (row) => {
   type.value = 'update'
   form.value = {
-    id: row.id,
     accountId: row.accountId,
-    data: row.data
+    openId: row.openId,
+    unionId: row.unionId,
+    nickName: row.nickName,
+    avatarUrl: row.avatarUrl,
+    gender: row.gender,
+    country: row.country,
+    province: row.province,
+    city: row.city,
+    language: row.language
   }
   drawerFormVisible.value = true
 }
@@ -265,19 +308,26 @@ const updatePlayer = async (row) => {
 const closeDrawer = () => {
   drawerFormVisible.value = false
   form.value = {
-    id: 0,
     accountId: 0,
-    data: ''
+    openId: '',
+    unionId: '',
+    nickName: '',
+    avatarUrl: '',
+    gender: 0,
+    country: '',
+    province: '',
+    city: '',
+    language: ''
   }
 }
 
-const deletePlayer = async (row) => {
+const deleteUser = async (row) => {
   ElMessageBox.confirm('确定要删除吗?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(async () => {
-    const res = await deletePlayerApi({ id: row.id, proxy: selectedGame.value })
+    const res = await deleteUserApi({ accountId: row.accountId, proxy: selectedGame.value })
     if (res.code === 0) {
       ElMessage({
         type: 'success',
@@ -295,25 +345,46 @@ const enterDrawer = async () => {
   let res
   switch (type.value) {
     case 'create':
-      res = await createPlayer({
+      res = await createUser({
         proxy: selectedGame.value,
-        accountId: form.value.accountId,
-        data: form.value.data
+        openId: form.value.openId,
+        unionId: form.value.unionId,
+        nickName: form.value.nickName,
+        avatarUrl: form.value.avatarUrl,
+        gender: form.value.gender,
+        country: form.value.country,
+        province: form.value.province,
+        city: form.value.city,
+        language: form.value.language
       })
       break
     case 'update':
-      res = await updatePlayerApi({
+      res = await updateUserApi({
         proxy: selectedGame.value,
-        id: form.value.id,
         accountId: form.value.accountId,
-        data: form.value.data
+        openId: form.value.openId,
+        unionId: form.value.unionId,
+        nickName: form.value.nickName,
+        avatarUrl: form.value.avatarUrl,
+        gender: form.value.gender,
+        country: form.value.country,
+        province: form.value.province,
+        city: form.value.city,
+        language: form.value.language
       })
       break
     default:
-      res = await createPlayer({
+      res = await createUser({
         proxy: selectedGame.value,
-        accountId: form.value.accountId,
-        data: form.value.data
+        openId: form.value.openId,
+        unionId: form.value.unionId,
+        nickName: form.value.nickName,
+        avatarUrl: form.value.avatarUrl,
+        gender: form.value.gender,
+        country: form.value.country,
+        province: form.value.province,
+        city: form.value.city,
+        language: form.value.language
       })
       break
   }

@@ -44,11 +44,11 @@ defineOptions({
 const router = useRouter()
 
 const goToPlayer = () => {
-  router.push('/game/player')
+  router.push('/game/admin/playerManage')
 }
 
 const goToUser = () => {
-  router.push('/game/user')
+  router.push('/game/admin/userManage')
 }
 
 const goToAdmin = () => {
