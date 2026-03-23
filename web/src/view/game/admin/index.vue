@@ -64,7 +64,7 @@
 <script setup>
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { adjustCurrency, importHeroes } from '@/api/gameAdmin'
+import { adjustCurrency, importHeroes } from '@/api/proxy-api'
 import { getDict } from '@/utils/dictionary'
 
 defineOptions({

@@ -166,7 +166,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
-import { setGachaRule } from '@/api/admin'
+import { setGachaRule } from '@/api/proxy-api'
 
 const searchInfo = ref({
   poolId: ''

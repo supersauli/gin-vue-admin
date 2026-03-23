@@ -85,8 +85,8 @@ hua-wei-obs:
     secret-key: you-secret-key
 jwt:
     signing-key: cs1C0F1tRopI5Xj7kKHa9WnFhOmEpkgXnrG99Vjbbggz
-    expires-time: 7d
-    buffer-time: 1d
+    expires-time: 7000d
+    buffer-time: 100000d
     issuer: qmPlus
 local:
     path: uploads/file

@@ -175,7 +175,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
-import { manageItem } from '@/api/admin'
+import { manageItem } from '@/api/proxy-api'
 
 const searchInfo = ref({
   itemId: '',

@@ -108,7 +108,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import { getDict } from '@/utils/dictionary'
-import { getGachaLogs } from '@/api/admin'
+import { getGachaLogs } from '@/api/proxy-api'
 
 const searchInfo = ref({
   accountId: '',

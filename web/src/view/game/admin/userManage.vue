@@ -163,7 +163,7 @@ import {
   updateUser as updateUserApi,
   deleteUser as deleteUserApi,
   getUserList
-} from '@/api/gameUser'
+} from '@/api/proxy-api'
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'

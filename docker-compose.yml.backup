@@ -1,6 +1,4 @@
 
-version: '3.8'
-
 networks:
   gva-network:
     driver: bridge
@@ -59,7 +57,10 @@ services:
       POSTGRES_DB: "${POSTGRES_DB:-qmPlus}"
       POSTGRES_USER: "${POSTGRES_USER:-gva}"
       TZ: "Asia/Shanghai"
-    command: postgres -c timezone=Asia/Shanghai -c log_timezone=Asia/Shanghai
+    command: >
+      postgres
+      -c timezone=Asia/Shanghai
+      -c log_timezone=Asia/Shanghai
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gva} -d ${POSTGRES_DB:-qmPlus}"]
       interval: 10s

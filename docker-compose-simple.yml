@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  # PostgreSQL 数据库
+  pgsql:
+    image: postgres:13
+    container_name: gva-pgsql
+    restart: always
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_PASSWORD: "Aa@6447985"
+      POSTGRES_DB: "qmPlus"
+      POSTGRES_USER: "gva"
+      TZ: "Asia/Shanghai"
+    command: postgres -c timezone=Asia/Shanghai
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+
+  # Redis 缓存
+  redis:
+    image: redis:6-alpine
+    container_name: gva-redis
+    restart: always
+    ports:
+      - "16379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
+volumes:
+  pgsql-data:
+  redis-data:

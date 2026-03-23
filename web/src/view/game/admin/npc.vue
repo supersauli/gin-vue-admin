@@ -158,7 +158,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
-import { manageNPC } from '@/api/admin'
+import { manageNPC } from '@/api/proxy-api'
 
 const searchInfo = ref({
   npcId: '',

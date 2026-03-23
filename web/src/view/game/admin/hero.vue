@@ -175,7 +175,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
-import { manageHero, importHeroes } from '@/api/admin'
+import { manageHero, importHeroes } from '@/api/proxy-api'
 
 const searchInfo = ref({
   heroId: '',

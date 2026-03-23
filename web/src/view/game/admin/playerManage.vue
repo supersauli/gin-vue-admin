@@ -133,7 +133,7 @@ import {
   updatePlayer as updatePlayerApi,
   deletePlayer as deletePlayerApi,
   getPlayerList
-} from '@/api/player'
+} from '@/api/proxy-api'
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'

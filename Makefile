@@ -80,28 +80,28 @@ plugin:
 
 # 启动所有服务（后台）
 dc-up:
-	docker compose up -d
+	docker-compose up -d
 
 # 构建镜像并启动（代码变更后用这个）
 dc-build:
-	docker compose up -d --build
+	docker-compose up -d --build
 
 # 重启所有服务
 dc-restart:
-	docker compose restart
+	docker-compose restart
 
 # 停止所有服务
 dc-down:
-	docker compose down
+	docker-compose down
 
 # 查看日志
 dc-logs:
-	docker compose logs -f
+	docker-compose logs -f
 
 # 查看运行状态
 dc-status:
-	docker compose ps
+	docker-compose ps
 
 # 清理（停止并删除容器、网络、卷）
 dc-clean:
-	docker compose down -v
+	docker-compose down -v

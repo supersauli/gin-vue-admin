@@ -104,7 +104,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import { getDict } from '@/utils/dictionary'
-import { adjustCurrency } from '@/api/admin'
+import { adjustCurrency } from '@/api/proxy-api'
 
 const form = ref({
   accountId: 0,
