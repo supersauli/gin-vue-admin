@@ -104,7 +104,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import { getDict } from '@/utils/dictionary'
-import { adjustCurrency } from '@/api/proxy-api'
+import { adjustCurrency ,getCurrencyList} from '@/api/proxy-api'
 
 const form = ref({
   accountId: 0,
@@ -196,7 +196,7 @@ const getTableData = async () => {
     params.currency = searchInfo.value.currency
   }
 
-  const table = await adjustCurrency(params)
+  const table = await getCurrencyList(params)
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total

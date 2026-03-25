@@ -12,10 +12,10 @@ class ApiClient {
       method,
       url: `${this.baseUrl}${url}`
     }
-
+    const { proxy, ...newParams } = params;
     // 添加 query 参数（GET 请求）
-    if (method.toLowerCase() === 'get' && params) {
-      config.params = params
+    if (method.toLowerCase() === 'get' && newParams) {
+      config.params = newParams
     }
 
     // 添加请求体数据（POST/PUT/PATCH 请求）
@@ -27,7 +27,7 @@ class ApiClient {
     if (params.proxy) {
       config.headers = {
         ...config.headers,
-        'proxy': params.proxy
+        'proxy': proxy
       }
     }
 
@@ -36,6 +36,7 @@ class ApiClient {
 
   // GET 请求
   get(url, params = {}) {
+
     return service(this.createConfig('GET', url, params))
   }
 
@@ -75,8 +76,8 @@ export const adminApi = new ApiClient()
 /**
  * 获取英雄列表
  */
-export const getHeroList = () => {
-  return heroApi.get('/hero/list')
+export const getHeroList = (params) => {
+  return heroApi.get('/admin/hero/list', params)
 }
 
 /**
@@ -112,15 +113,15 @@ export const upgradeHero = (params) => {
 /**
  * 获取道具列表
  */
-export const getItemList = () => {
-  return itemApi.get('/item/list')
+export const getItemList = (params) => {
+  return itemApi.get('/admin/items', params)
 }
 
 /**
  * 获取用户道具
  */
 export const getUserItems = (params) => {
-  return itemApi.get('/item/my', params)
+  return itemApi.get('/admin/items', params)
 }
 
 // ==================== NPC相关API ====================
@@ -128,8 +129,8 @@ export const getUserItems = (params) => {
 /**
  * 获取NPC列表
  */
-export const getNPCList = () => {
-  return npcApi.get('/npc/list')
+export const getNPCList = (params) => {
+  return npcApi.get('/admin/npc/manage', params)
 }
 
 // ==================== 用户相关API ====================
@@ -138,21 +139,21 @@ export const getNPCList = () => {
  * 获取用户信息
  */
 export const getUserInfo = (params) => {
-  return userApi.get('/user/info', params)
+  return userApi.get('/admin/users', params)
 }
 
 /**
  * 获取用户资料
  */
 export const getProfile = (params) => {
-  return userApi.get('/user/profile', params)
+  return userApi.get('/admin/users', params)
 }
 
 /**
  * 更新用户信息
  */
 export const updateUserInfo = (params) => {
-  return userApi.post('/user/update_info', params, params.data)
+  return userApi.post('/admin/users/update', params, params.data)
 }
 
 // ==================== 管理员相关API ====================
@@ -162,6 +163,9 @@ export const updateUserInfo = (params) => {
  */
 export const adjustCurrency = (params) => {
   return adminApi.post('/admin/currency/adjust', params, params.data)
+}
+export const getCurrencyList = (params) => {
+  return adminApi.get('/admin/wallets', params)
 }
 
 /**
@@ -176,6 +180,10 @@ export const getGachaLogs = (params) => {
  */
 export const setGachaRule = (params) => {
   return adminApi.post('/admin/gacha/rule', params, params.data)
+}
+
+export const getGachaRule = (params) => {
+  return adminApi.get('/admin/gacha/rules', params)
 }
 
 /**
@@ -204,6 +212,9 @@ export const manageHero = (params) => {
  */
 export const manageItem = (params) => {
   return adminApi.post('/admin/item/manage', params, params.data)
+}
+export const deleteItem = (params) => {
+  return adminApi.post('/admin/item/delete', params, params.data)
 }
 
 /**

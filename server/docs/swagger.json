@@ -127,17 +127,39 @@
                     },
                     {
                         "type": "integer",
-                        "description": "页码，默认1",
+                        "description": "当前页码",
                         "name": "page",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "每页大小，默认20",
+                        "description": "每页大小",
                         "name": "pageSize",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -221,14 +243,6 @@
                                             }
                                         }
                                     }
-                                },
-                                "page": {
-                                    "description": "当前页码",
-                                    "type": "integer"
-                                },
-                                "size": {
-                                    "description": "每页大小",
-                                    "type": "integer"
                                 },
                                 "total": {
                                     "description": "总数",
@@ -352,6 +366,238 @@
                 }
             }
         },
+        "/api/v1/admin/gacha/rule/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "删除抽卡规则",
+                "operationId": "adminRuleDelete",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "poolId",
+                                "ruleName"
+                            ],
+                            "properties": {
+                                "poolId": {
+                                    "description": "卡池ID",
+                                    "type": "integer"
+                                },
+                                "ruleName": {
+                                    "description": "规则名称",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "状态码",
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "description": "数据",
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "description": "消息",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/gacha/rules": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "查询抽卡规则",
+                "operationId": "adminRuleQuery",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "卡池ID，0表示查询所有",
+                        "name": "poolId",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "规则名称模糊查询",
+                        "name": "ruleName",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "激活状态筛选",
+                        "name": "isActive",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "rules": {
+                                    "description": "规则列表",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "poolId",
+                                            "ruleName",
+                                            "drawType",
+                                            "costCurrency",
+                                            "costAmount",
+                                            "discount",
+                                            "guaranteeRarity",
+                                            "guaranteeDraws",
+                                            "guaranteeMaxRarity",
+                                            "dailyLimit",
+                                            "weeklyLimit",
+                                            "monthlyLimit",
+                                            "isActive",
+                                            "createdAt",
+                                            "updatedAt"
+                                        ],
+                                        "properties": {
+                                            "costAmount": {
+                                                "description": "消耗数量",
+                                                "type": "number"
+                                            },
+                                            "costCurrency": {
+                                                "description": "消耗货币类型",
+                                                "type": "string"
+                                            },
+                                            "createdAt": {
+                                                "description": "创建时间",
+                                                "type": "string"
+                                            },
+                                            "dailyLimit": {
+                                                "description": "每日限制",
+                                                "type": "integer"
+                                            },
+                                            "discount": {
+                                                "description": "折扣",
+                                                "type": "number"
+                                            },
+                                            "drawType": {
+                                                "description": "抽卡类型 (1-单抽, 2-十连抽)",
+                                                "type": "integer"
+                                            },
+                                            "guaranteeDraws": {
+                                                "description": "保底抽数",
+                                                "type": "integer"
+                                            },
+                                            "guaranteeMaxRarity": {
+                                                "description": "保底最高稀有度",
+                                                "type": "integer"
+                                            },
+                                            "guaranteeRarity": {
+                                                "description": "保底稀有度",
+                                                "type": "integer"
+                                            },
+                                            "isActive": {
+                                                "description": "是否激活",
+                                                "type": "boolean"
+                                            },
+                                            "monthlyLimit": {
+                                                "description": "每月限制",
+                                                "type": "integer"
+                                            },
+                                            "poolId": {
+                                                "description": "卡池ID",
+                                                "type": "integer"
+                                            },
+                                            "ruleName": {
+                                                "description": "规则名称",
+                                                "type": "string"
+                                            },
+                                            "updatedAt": {
+                                                "description": "更新时间",
+                                                "type": "string"
+                                            },
+                                            "weeklyLimit": {
+                                                "description": "每周限制",
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "total": {
+                                    "description": "总数",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/hero/attr": {
             "post": {
                 "consumes": [
@@ -423,6 +669,97 @@
                                 },
                                 "speed": {
                                     "description": "速度",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "状态码",
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "description": "数据",
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "description": "消息",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/hero/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "删除英雄",
+                "operationId": "adminHeroDelete",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "heroId",
+                                "name",
+                                "rarity",
+                                "iconUrl",
+                                "imageUrl",
+                                "isActive",
+                                "weight",
+                                "attributes"
+                            ],
+                            "properties": {
+                                "attributes": {
+                                    "description": "英雄属性(JSON)",
+                                    "type": "string"
+                                },
+                                "heroId": {
+                                    "description": "英雄ID",
+                                    "type": "integer"
+                                },
+                                "iconUrl": {
+                                    "description": "图标URL",
+                                    "type": "string"
+                                },
+                                "imageUrl": {
+                                    "description": "图片URL",
+                                    "type": "string"
+                                },
+                                "isActive": {
+                                    "description": "是否在奖池中",
+                                    "type": "boolean"
+                                },
+                                "name": {
+                                    "description": "英雄名称",
+                                    "type": "string"
+                                },
+                                "rarity": {
+                                    "description": "稀有度 (1-4)",
+                                    "type": "integer"
+                                },
+                                "weight": {
+                                    "description": "权重",
                                     "type": "integer"
                                 }
                             }
@@ -597,17 +934,39 @@
                     },
                     {
                         "type": "integer",
-                        "description": "页码，默认1",
+                        "description": "当前页码",
                         "name": "page",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "每页大小，默认20，最大100",
-                        "name": "size",
+                        "description": "每页大小",
+                        "name": "pageSize",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -676,14 +1035,6 @@
                                             }
                                         }
                                     }
-                                },
-                                "page": {
-                                    "description": "当前页码",
-                                    "type": "integer"
-                                },
-                                "size": {
-                                    "description": "每页大小",
-                                    "type": "integer"
                                 },
                                 "total": {
                                     "description": "总数",
@@ -775,6 +1126,62 @@
                                 "success": {
                                     "description": "是否成功",
                                     "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/item/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "删除道具",
+                "operationId": "adminItemDelete",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "itemId"
+                            ],
+                            "properties": {
+                                "itemId": {
+                                    "description": "道具ID",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "状态码",
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "description": "数据",
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "description": "消息",
+                                    "type": "string"
                                 }
                             }
                         }
@@ -889,6 +1296,247 @@
                 }
             }
         },
+        "/api/v1/admin/items": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "查询道具",
+                "operationId": "adminItemQuery",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "道具ID，0表示查询所有",
+                        "name": "itemId",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "道具名称模糊查询",
+                        "name": "name",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "道具类型筛选",
+                        "name": "type",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "稀有度筛选",
+                        "name": "rarity",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否消耗品筛选",
+                        "name": "isConsume",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "items": {
+                                    "description": "道具列表",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "itemId",
+                                            "name",
+                                            "type",
+                                            "subType",
+                                            "desc",
+                                            "iconUrl",
+                                            "rarity",
+                                            "maxStack",
+                                            "useLevel",
+                                            "price",
+                                            "isSellable",
+                                            "isConsume",
+                                            "totalStock",
+                                            "createdAt",
+                                            "updatedAt"
+                                        ],
+                                        "properties": {
+                                            "createdAt": {
+                                                "description": "创建时间",
+                                                "type": "string"
+                                            },
+                                            "desc": {
+                                                "description": "道具描述",
+                                                "type": "string"
+                                            },
+                                            "iconUrl": {
+                                                "description": "图标URL",
+                                                "type": "string"
+                                            },
+                                            "isConsume": {
+                                                "description": "是否消耗品",
+                                                "type": "boolean"
+                                            },
+                                            "isSellable": {
+                                                "description": "是否可出售",
+                                                "type": "boolean"
+                                            },
+                                            "itemId": {
+                                                "description": "道具ID",
+                                                "type": "integer"
+                                            },
+                                            "maxStack": {
+                                                "description": "最大堆叠数",
+                                                "type": "integer"
+                                            },
+                                            "name": {
+                                                "description": "道具名称",
+                                                "type": "string"
+                                            },
+                                            "price": {
+                                                "description": "售价",
+                                                "type": "integer"
+                                            },
+                                            "rarity": {
+                                                "description": "稀有度",
+                                                "type": "integer"
+                                            },
+                                            "subType": {
+                                                "description": "子类型",
+                                                "type": "string"
+                                            },
+                                            "totalStock": {
+                                                "description": "总库存量",
+                                                "type": "integer"
+                                            },
+                                            "type": {
+                                                "description": "道具类型",
+                                                "type": "string"
+                                            },
+                                            "updatedAt": {
+                                                "description": "更新时间",
+                                                "type": "string"
+                                            },
+                                            "useLevel": {
+                                                "description": "使用等级限制",
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "total": {
+                                    "description": "总数",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/npc/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "删除NPC",
+                "operationId": "adminNPCDDelete",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "npcId"
+                            ],
+                            "properties": {
+                                "npcId": {
+                                    "description": "NPC ID",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "状态码",
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "description": "数据",
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "description": "消息",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/npc/manage": {
             "post": {
                 "consumes": [
@@ -991,6 +1639,184 @@
                 }
             }
         },
+        "/api/v1/admin/npcs": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "查询NPC",
+                "operationId": "adminNPCCQuery",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "NPC ID，0表示查询所有",
+                        "name": "npcId",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "NPC名称模糊查询",
+                        "name": "name",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "NPC类型筛选",
+                        "name": "type",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "等级筛选",
+                        "name": "level",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "激活状态筛选",
+                        "name": "isActive",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "npcs": {
+                                    "description": "NPC列表",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "npcId",
+                                            "name",
+                                            "type",
+                                            "subType",
+                                            "level",
+                                            "desc",
+                                            "iconUrl",
+                                            "model",
+                                            "attributes",
+                                            "skills",
+                                            "isActive",
+                                            "createdAt",
+                                            "updatedAt"
+                                        ],
+                                        "properties": {
+                                            "attributes": {
+                                                "description": "属性(JSON)",
+                                                "type": "string"
+                                            },
+                                            "createdAt": {
+                                                "description": "创建时间",
+                                                "type": "string"
+                                            },
+                                            "desc": {
+                                                "description": "描述",
+                                                "type": "string"
+                                            },
+                                            "iconUrl": {
+                                                "description": "图标URL",
+                                                "type": "string"
+                                            },
+                                            "isActive": {
+                                                "description": "是否激活",
+                                                "type": "boolean"
+                                            },
+                                            "level": {
+                                                "description": "等级",
+                                                "type": "integer"
+                                            },
+                                            "model": {
+                                                "description": "模型",
+                                                "type": "string"
+                                            },
+                                            "name": {
+                                                "description": "NPC名称",
+                                                "type": "string"
+                                            },
+                                            "npcId": {
+                                                "description": "NPC ID",
+                                                "type": "integer"
+                                            },
+                                            "skills": {
+                                                "description": "技能(JSON数组)",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "subType": {
+                                                "description": "子类型",
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "description": "NPC类型",
+                                                "type": "string"
+                                            },
+                                            "updatedAt": {
+                                                "description": "更新时间",
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "total": {
+                                    "description": "总数",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/players": {
             "get": {
                 "produces": [
@@ -1004,17 +1830,17 @@
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "页码，默认 1",
+                        "description": "当前页码",
                         "name": "page",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "每页数量，默认 20",
+                        "description": "每页大小",
                         "name": "pageSize",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
                     },
                     {
                         "type": "integer",
@@ -1034,6 +1860,28 @@
                         "name": "endTime",
                         "in": "query",
                         "allowEmptyValue": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -1244,6 +2092,62 @@
                 }
             }
         },
+        "/api/v1/admin/pool/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "删除卡池",
+                "operationId": "adminPoolDelete",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "poolId"
+                            ],
+                            "properties": {
+                                "poolId": {
+                                    "description": "卡池ID",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "状态码",
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "description": "数据",
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "description": "消息",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/pool/manage": {
             "post": {
                 "consumes": [
@@ -1413,6 +2317,385 @@
                 }
             }
         },
+        "/api/v1/admin/pool/prob/delete": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "删除概率配置",
+                "operationId": "adminProbDelete",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "poolId",
+                                "rarity"
+                            ],
+                            "properties": {
+                                "poolId": {
+                                    "description": "卡池ID",
+                                    "type": "integer"
+                                },
+                                "rarity": {
+                                    "description": "稀有度 (1-4)",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "description": "状态码",
+                                    "type": "integer"
+                                },
+                                "data": {
+                                    "description": "数据",
+                                    "type": "string"
+                                },
+                                "message": {
+                                    "description": "消息",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/pool/probs": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "查询概率配置",
+                "operationId": "adminProbQuery",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "卡池ID",
+                        "name": "poolId",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "稀有度 (1-4)",
+                        "name": "rarity",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "激活状态筛选",
+                        "name": "isActive",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "probs": {
+                                    "description": "概率配置列表",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "poolId",
+                                            "rarity",
+                                            "baseProb",
+                                            "weight",
+                                            "heroIds",
+                                            "isActive",
+                                            "createdAt",
+                                            "updatedAt"
+                                        ],
+                                        "properties": {
+                                            "baseProb": {
+                                                "description": "基础概率 (%)",
+                                                "type": "number"
+                                            },
+                                            "createdAt": {
+                                                "description": "创建时间",
+                                                "type": "string"
+                                            },
+                                            "heroIds": {
+                                                "description": "包含的英雄ID列表",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "isActive": {
+                                                "description": "是否激活",
+                                                "type": "boolean"
+                                            },
+                                            "poolId": {
+                                                "description": "卡池ID",
+                                                "type": "integer"
+                                            },
+                                            "rarity": {
+                                                "description": "稀有度 (1-4)",
+                                                "type": "integer"
+                                            },
+                                            "updatedAt": {
+                                                "description": "更新时间",
+                                                "type": "string"
+                                            },
+                                            "weight": {
+                                                "description": "权重",
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "total": {
+                                    "description": "总数",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/pools": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "查询卡池",
+                "operationId": "adminPoolQuery",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "卡池ID，0表示查询所有",
+                        "name": "poolId",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "卡池名称模糊查询",
+                        "name": "name",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "激活状态筛选",
+                        "name": "isActive",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "开始时间筛选",
+                        "name": "startTime",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "结束时间筛选",
+                        "name": "endTime",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "pools": {
+                                    "description": "卡池列表",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "poolId",
+                                            "name",
+                                            "description",
+                                            "costType",
+                                            "costAmount",
+                                            "isActive",
+                                            "startTime",
+                                            "endTime",
+                                            "probability"
+                                        ],
+                                        "properties": {
+                                            "costAmount": {
+                                                "description": "单次抽卡消耗",
+                                                "type": "number"
+                                            },
+                                            "costType": {
+                                                "description": "消耗类型",
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "description": "卡池描述",
+                                                "type": "string"
+                                            },
+                                            "endTime": {
+                                                "description": "结束时间",
+                                                "type": "integer"
+                                            },
+                                            "isActive": {
+                                                "description": "是否激活",
+                                                "type": "boolean"
+                                            },
+                                            "name": {
+                                                "description": "卡池名称",
+                                                "type": "string"
+                                            },
+                                            "poolId": {
+                                                "description": "卡池ID",
+                                                "type": "integer"
+                                            },
+                                            "probability": {
+                                                "description": "概率配置",
+                                                "type": "object",
+                                                "required": [
+                                                    "rarity1",
+                                                    "rarity2",
+                                                    "rarity3",
+                                                    "rarity4"
+                                                ],
+                                                "properties": {
+                                                    "rarity1": {
+                                                        "description": "普通概率 (%)",
+                                                        "type": "number"
+                                                    },
+                                                    "rarity2": {
+                                                        "description": "稀有概率 (%)",
+                                                        "type": "number"
+                                                    },
+                                                    "rarity3": {
+                                                        "description": "史诗概率 (%)",
+                                                        "type": "number"
+                                                    },
+                                                    "rarity4": {
+                                                        "description": "传说概率 (%)",
+                                                        "type": "number"
+                                                    }
+                                                }
+                                            },
+                                            "startTime": {
+                                                "description": "开始时间",
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "total": {
+                                    "description": "总数",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/admin/users": {
             "get": {
                 "produces": [
@@ -1433,17 +2716,17 @@
                     },
                     {
                         "type": "integer",
-                        "description": "页码，默认 1",
+                        "description": "当前页码",
                         "name": "page",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "每页数量，默认 20",
+                        "description": "每页大小",
                         "name": "pageSize",
                         "in": "query",
-                        "allowEmptyValue": true
+                        "required": true
                     },
                     {
                         "type": "integer",
@@ -1456,6 +2739,28 @@
                         "name": "endTime",
                         "in": "query",
                         "allowEmptyValue": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -1763,6 +3068,103 @@
                                 "success": {
                                     "description": "是否成功",
                                     "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/wallets": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "schemes": [
+                    "https"
+                ],
+                "summary": "获取用户钱包余额",
+                "operationId": "getUserWallets",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户账号ID，0表示查询所有",
+                        "name": "accountId",
+                        "in": "query",
+                        "allowEmptyValue": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
+                            "properties": {
+                                "page": {
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "list": {
+                                    "description": "用户钱包列表",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "accountId",
+                                            "currency",
+                                            "balance"
+                                        ],
+                                        "properties": {
+                                            "accountId": {
+                                                "description": "账号 ID",
+                                                "type": "integer"
+                                            },
+                                            "balance": {
+                                                "description": "余额",
+                                                "type": "number"
+                                            },
+                                            "currency": {
+                                                "description": "货币类型",
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "total": {
+                                    "description": "总数",
+                                    "type": "integer"
                                 }
                             }
                         }
@@ -2081,22 +3483,40 @@
                 "operationId": "getGachaHistory",
                 "parameters": [
                     {
+                        "type": "integer",
+                        "description": "当前页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
                             "type": "object",
+                            "required": [
+                                "page",
+                                "pageSize"
+                            ],
                             "properties": {
                                 "page": {
-                                    "description": "页码，默认1",
+                                    "description": "当前页码",
+                                    "type": "integer"
+                                },
+                                "pageSize": {
+                                    "description": "每页大小",
                                     "type": "integer"
                                 },
                                 "poolId": {
                                     "description": "卡池ID，0表示所有卡池",
-                                    "type": "integer"
-                                },
-                                "size": {
-                                    "description": "每页大小，默认20，最大100",
                                     "type": "integer"
                                 }
                             }
@@ -2109,10 +3529,6 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "page": {
-                                    "description": "当前页码",
-                                    "type": "integer"
-                                },
                                 "records": {
                                     "description": "记录列表",
                                     "type": "array",
@@ -2158,10 +3574,6 @@
                                             }
                                         }
                                     }
-                                },
-                                "size": {
-                                    "description": "每页大小",
-                                    "type": "integer"
                                 },
                                 "total": {
                                     "description": "总数",
@@ -3209,7 +4621,7 @@
             }
         }
     },
-    "x-date": "2026-03-23 06:06:09",
+    "x-date": "2026-03-25 01:05:48",
     "x-description": "This is a goctl generated swagger file.",
     "x-github": "https://github.com/zeromicro/go-zero",
     "x-go-zero-doc": "https://go-zero.dev/",

@@ -166,7 +166,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
-import { setGachaRule } from '@/api/proxy-api'
+import { setGachaRule, getGachaRule } from '@/api/proxy-api'
 
 const searchInfo = ref({
   poolId: ''
@@ -254,7 +254,7 @@ const getTableData = async () => {
     params.poolId = parseInt(searchInfo.value.poolId)
   }
 
-  const table = await setGachaRule(params)
+  const table = await getGachaRule(params)
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -300,19 +300,21 @@ const confirmRule = async () => {
 
   const res = await setGachaRule({
     proxy: selectedGame.value,
-    poolId: parseInt(ruleForm.value.poolId),
-    ruleName: ruleForm.value.ruleName,
-    drawType: ruleForm.value.drawType,
-    costCurrency: ruleForm.value.costCurrency,
-    costAmount: parseFloat(ruleForm.value.costAmount),
-    discount: parseFloat(ruleForm.value.discount),
-    guaranteeRarity: ruleForm.value.guaranteeRarity,
-    guaranteeDraws: parseInt(ruleForm.value.guaranteeDraws),
-    guaranteeMaxRarity: ruleForm.value.guaranteeMaxRarity,
-    dailyLimit: parseInt(ruleForm.value.dailyLimit),
-    weeklyLimit: parseInt(ruleForm.value.weeklyLimit),
-    monthlyLimit: parseInt(ruleForm.value.monthlyLimit),
-    isActive: ruleForm.value.isActive
+    data: {
+      poolId: parseInt(ruleForm.value.poolId),
+      ruleName: ruleForm.value.ruleName,
+      drawType: ruleForm.value.drawType,
+      costCurrency: ruleForm.value.costCurrency,
+      costAmount: parseFloat(ruleForm.value.costAmount),
+      discount: parseFloat(ruleForm.value.discount),
+      guaranteeRarity: ruleForm.value.guaranteeRarity,
+      guaranteeDraws: parseInt(ruleForm.value.guaranteeDraws),
+      guaranteeMaxRarity: ruleForm.value.guaranteeMaxRarity,
+      dailyLimit: parseInt(ruleForm.value.dailyLimit),
+      weeklyLimit: parseInt(ruleForm.value.weeklyLimit),
+      monthlyLimit: parseInt(ruleForm.value.monthlyLimit),
+      isActive: ruleForm.value.isActive
+    }
   })
 
   if (res.code === 0) {
@@ -350,20 +352,22 @@ const deleteRule = async (row) => {
   }).then(async () => {
     const res = await setGachaRule({
       proxy: selectedGame.value,
-      poolId: row.poolId,
-      ruleName: row.ruleName,
-      drawType: row.drawType,
-      costCurrency: row.costCurrency,
-      costAmount: row.costAmount,
-      discount: row.discount,
-      guaranteeRarity: row.guaranteeRarity,
-      guaranteeDraws: row.guaranteeDraws,
-      guaranteeMaxRarity: row.guaranteeMaxRarity,
-      dailyLimit: row.dailyLimit,
-      weeklyLimit: row.weeklyLimit,
-      monthlyLimit: row.monthlyLimit,
-      isActive: row.isActive,
-      isDelete: true
+      data: {
+        poolId: row.poolId,
+        ruleName: row.ruleName,
+        drawType: row.drawType,
+        costCurrency: row.costCurrency,
+        costAmount: row.costAmount,
+        discount: row.discount,
+        guaranteeRarity: row.guaranteeRarity,
+        guaranteeDraws: row.guaranteeDraws,
+        guaranteeMaxRarity: row.guaranteeMaxRarity,
+        dailyLimit: row.dailyLimit,
+        weeklyLimit: row.weeklyLimit,
+        monthlyLimit: row.monthlyLimit,
+        isActive: row.isActive,
+        isDelete: true
+      }
     })
     if (res.code === 0) {
       ElMessage.success('删除成功')

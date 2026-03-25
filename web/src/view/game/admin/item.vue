@@ -175,7 +175,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
-import { manageItem } from '@/api/proxy-api'
+import { getItemList, manageItem, deleteItem } from '@/api/proxy-api'
 
 const searchInfo = ref({
   itemId: '',
@@ -276,7 +276,7 @@ const getTableData = async () => {
     params.type = searchInfo.value.type
   }
 
-  const table = await manageItem(params)
+  const table = await getItemList(params)
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -361,27 +361,15 @@ const updateItem = (row) => {
   itemDialogVisible.value = true
 }
 
-const deleteItem = async (row) => {
+const deleteItemById = async (row) => {
   ElMessage.confirm('确定要删除吗?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(async () => {
-    const res = await manageItem({
+    const res = await deleteItem({
       proxy: selectedGame.value,
-      itemId: row.itemId,
-      name: row.name,
-      type: row.type,
-      subType: row.subType,
-      desc: row.desc,
-      iconUrl: row.iconUrl,
-      rarity: row.rarity,
-      maxStack: row.maxStack,
-      useLevel: row.useLevel,
-      price: row.price,
-      isSellable: row.isSellable,
-      isConsume: row.isConsume,
-      isDelete: true
+      itemId: row.itemId
     })
     if (res.code === 0) {
       ElMessage.success('删除成功')

@@ -175,7 +175,7 @@
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getDict } from '@/utils/dictionary'
-import { manageHero, importHeroes } from '@/api/proxy-api'
+import { getHeroList, importHeroes } from '@/api/proxy-api'
 
 const searchInfo = ref({
   heroId: '',
@@ -277,7 +277,7 @@ const getTableData = async () => {
     params.rarity = parseInt(searchInfo.value.rarity)
   }
 
-  const table = await manageHero(params)
+  const table = await getHeroList(params)
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total

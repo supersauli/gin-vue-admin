@@ -203,7 +203,10 @@ const getTableData = async () => {
     tableData.value = table.data.logs
     total.value = table.data.total
     page.value = table.data.page
-    pageSize.value = table.data.size
+    console.log("conssssss",table)
+    console.log("dddd",table.data)
+    console.log("dddd",table.data.pageSize)
+    pageSize.value = table.data.pageSize
   }
 }
 
