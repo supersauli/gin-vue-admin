@@ -68,6 +68,30 @@ export interface HeroData {
   status: 'equipped' | 'unequipped'
 }
 
+// 英雄创建请求
+export interface HeroCreateRequest {
+  heroId: number
+  name: string
+  rarity: number
+  iconUrl: string
+  imageUrl: string
+  isActive: boolean
+  weight: number
+  attributes: string
+}
+
+// 英雄更新请求
+export interface HeroUpdateRequest {
+  heroId: number
+  name: string
+  rarity: number
+  iconUrl: string
+  imageUrl: string
+  isActive: boolean
+  weight: number
+  attributes: string
+}
+
 // 道具数据模型
 export interface ItemData {
   id: number

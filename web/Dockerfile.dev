@@ -1,0 +1,26 @@
+FROM node:20
+
+# 接收 docker-compose 传递的 NODE_OPTIONS（仅内存参数）
+ARG NODE_OPTIONS
+ENV NODE_OPTIONS=$NODE_OPTIONS 
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制包配置文件
+COPY package.json package-lock.json* ./
+
+# 安装依赖
+RUN npm install
+
+# 复制全部代码
+COPY . .
+
+# 环境变量
+ENV NODE_ENV=development
+
+# 暴露端口
+EXPOSE 5173
+
+# 启动开发服务器
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]

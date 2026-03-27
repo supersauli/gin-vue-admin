@@ -105,3 +105,19 @@ dc-status:
 # 清理（停止并删除容器、网络、卷）
 dc-clean:
 	docker-compose down -v
+
+# ===========================
+# 开发模式快捷命令
+# ===========================
+
+# 启动前端开发模式（热更新）
+dc-dev-web:
+	docker-compose -f docker-compose.dev.yml up web
+
+# 启动所有服务（开发模式）
+dc-dev:
+	docker-compose -f docker-compose.dev.yml up
+
+# 停止开发模式服务
+dc-dev-down:
+	docker-compose -f docker-compose.dev.yml down

@@ -1,0 +1,127 @@
+networks:
+  gva-network:
+    driver: bridge
+  account_entry_wechat-network:
+    external: true
+
+volumes:
+  pgsql-data:
+  redis-data:
+  node_modules:
+
+# 环境变量
+x-common-env:
+  &common-env
+  VITE_BASE_API: /api
+  VITE_SERVER_PORT: 8888
+  VITE_CLI_PORT: 5173
+  VITE_BASE_PATH: http://server
+
+# 通用服务配置
+x-server-common:
+  &server-common
+  build:
+    context: ./server
+    dockerfile: Dockerfile
+  container_name: gva-server
+  restart: always
+  ports:
+    - "${SERVER_PORT:-8888}:8888"
+  depends_on:
+    pgsql:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  environment:
+    - GIN_MODE=release
+  volumes:
+    - ./server/resource:/go/src/github.com/flipped-aurora/gin-vue-admin/server/resource
+    - ./server/uploads:/go/src/github.com/flipped-aurora/gin-vue-admin/server/uploads
+    - ./server/config.docker.yaml:/go/src/github.com/flipped-aurora/gin-vue-admin/server/config.docker.yaml
+  networks:
+    - gva-network
+    - account_entry_wechat-network
+
+x-pgsql-common:
+  &pgsql-common
+  image: postgres:15-alpine
+  container_name: gva-pgsql
+  restart: always
+  ports:
+    - "${PGSQL_PORT:-15432}:5432"
+  environment:
+    POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-Aa@6447985}"
+    POSTGRES_DB: "${POSTGRES_DB:-qmPlus}"
+    POSTGRES_USER: "${POSTGRES_USER:-gva}"
+    TZ: "Asia/Shanghai"
+  command: postgres -c timezone=Asia/Shanghai -c log_timezone=Asia/Shanghai
+  healthcheck:
+    test:
+      [
+        "CMD-SHELL",
+        "pg_isready -U ${POSTGRES_USER:-gva} -d ${POSTGRES_DB:-qmPlus}",
+      ]
+    interval: 10s
+    timeout: 5s
+    retries: 10
+    start_period: 30s
+  volumes:
+    - pgsql-data:/var/lib/postgresql/data
+  networks:
+    - gva-network
+
+x-redis-common:
+  &redis-common
+  image: redis:7-alpine
+  container_name: gva-redis
+  restart: always
+  ports:
+    - "${REDIS_PORT:-16379}:6379"
+  command: redis-server --appendonly yes
+  healthcheck:
+    test: ["CMD", "redis-cli", "ping"]
+    interval: 10s
+    timeout: 5s
+    retries: 10
+    start_period: 10s
+  volumes:
+    - redis-data:/data
+  networks:
+    - gva-network
+
+services:
+  # 前端服务 - Vue3 + Vite 开发模式（支持热更新）
+  web:
+    image: node:20
+    container_name: gva-web-dev
+    restart: always
+    ports:
+      - "5173:5173"  # Vite 开发服务器端口
+    depends_on:
+      server:
+        condition: service_started
+    volumes:
+      - ./web:/app
+    working_dir: /app
+    environment:
+      - NODE_ENV=development
+      - VITE_BASE_API=/api
+      - VITE_SERVER_PORT=8888
+      - VITE_CLI_PORT=5173
+      - VITE_BASE_PATH=http://server
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["npm install && npm run dev -- --host 0.0.0.0 --port 5173"]
+    networks:
+      - gva-network
+
+  # 后端服务（与原配置相同）
+  server:
+    <<: *server-common
+
+  # 数据库服务（与原配置相同）
+  pgsql:
+    <<: *pgsql-common
+
+  # Redis服务（与原配置相同）
+  redis:
+    <<: *redis-common
