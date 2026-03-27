@@ -13,9 +13,17 @@ class ApiClient {
       url: `${this.baseUrl}${url}`
     }
     const { proxy, ...newParams } = params;
+    // 过滤空值参数
+    const filteredParams = {};
+    for (const key in newParams) {
+      const value = newParams[key];
+      if (value !== '' && value !== null && value !== undefined) {
+        filteredParams[key] = value;
+      }
+    }
     // 添加 query 参数（GET 请求）
-    if (method.toLowerCase() === 'get' && newParams) {
-      config.params = newParams
+    if (method.toLowerCase() === 'get' && Object.keys(filteredParams).length > 0) {
+      config.params = filteredParams
     }
 
     // 添加请求体数据（POST/PUT/PATCH 请求）
@@ -24,7 +32,7 @@ class ApiClient {
     }
 
     // 如果有 proxy 参数，添加到 headers
-    if (params.proxy) {
+    if (proxy) {
       config.headers = {
         ...config.headers,
         'proxy': proxy
@@ -111,10 +119,34 @@ export const upgradeHero = (params) => {
 // ==================== 道具相关API ====================
 
 /**
- * 获取道具列表
+ * 管理道具（创建或更新）
  */
-export const getItemList = (params) => {
-  return itemApi.get('/admin/items', params)
+export const manageItem = (params) => {
+  // 构建请求参数
+  const requestParams = {
+    proxy: params.proxy,
+    data: {
+      itemId: params.itemId,
+      name: params.name,
+      type: params.type,
+      subType: params.subType,
+      desc: params.desc,
+      iconUrl: params.iconUrl,
+      rarity: params.rarity,
+      maxStack: params.maxStack,
+      useLevel: params.useLevel,
+      price: params.price,
+      isSellable: params.isSellable,
+      isConsume: params.isConsume
+    }
+  }
+  
+  // 根据是否存在itemId来判断是创建还是更新
+  if (params.itemId) {
+    return updateItem(requestParams)
+  } else {
+    return createItem(requestParams)
+  }
 }
 
 /**
@@ -127,11 +159,35 @@ export const getUserItems = (params) => {
 // ==================== NPC相关API ====================
 
 /**
- * 获取NPC列表
+ * 管理NPC（创建或更新）
  */
-export const getNPCList = (params) => {
-  return npcApi.get('/admin/npc/manage', params)
+export const manageNPC = (params) => {
+  // 构建请求参数
+  const requestParams = {
+    proxy: params.proxy,
+    data: {
+      npcId: params.npcId,
+      name: params.name,
+      type: params.type,
+      subType: params.subType,
+      level: params.level,
+      desc: params.desc,
+      iconUrl: params.iconUrl,
+      model: params.model,
+      attributes: params.attributes,
+      skills: params.skills,
+      isActive: params.isActive
+    }
+  }
+  
+  // 根据是否存在npcId来判断是创建还是更新
+  if (params.npcId) {
+    return updateNPC(requestParams)
+  } else {
+    return createNPC(requestParams)
+  }
 }
+
 
 // ==================== 用户相关API ====================
 
@@ -159,13 +215,56 @@ export const updateUserInfo = (params) => {
 // ==================== 管理员相关API ====================
 
 /**
+ * 设置抽卡规则（创建或更新）
+ */
+export const setGachaRule = (params) => {
+  // 构建请求参数
+  const requestParams = {
+    proxy: params.proxy,
+    data: {
+      poolId: params.poolId,
+      ruleName: params.ruleName,
+      drawType: params.drawType,
+      costCurrency: params.costCurrency,
+      costAmount: params.costAmount,
+      discount: params.discount,
+      guaranteeRarity: params.guaranteeRarity,
+      guaranteeDraws: params.guaranteeDraws,
+      guaranteeMaxRarity: params.guaranteeMaxRarity,
+      dailyLimit: params.dailyLimit,
+      weeklyLimit: params.weeklyLimit,
+      monthlyLimit: params.monthlyLimit,
+      isActive: params.isActive
+    }
+  }
+  
+  // 根据是否存在poolId来判断是创建还是更新
+  if (params.poolId) {
+    return updateGachaRule(requestParams)
+  } else {
+    return createGachaRule(requestParams)
+  }
+}
+
+/**
  * 调整用户货币
  */
 export const adjustCurrency = (params) => {
   return adminApi.post('/admin/currency/adjust', params, params.data)
 }
+
+/**
+ * 获取用户钱包列表
+ */
 export const getCurrencyList = (params) => {
   return adminApi.get('/admin/wallets', params)
+}
+
+/**
+ * 创建用户钱包
+ */
+export const createUserWallet = (params) => {
+  return adminApi.post('/admin/wallet/create', params, params.data)
 }
 
 /**
@@ -176,21 +275,52 @@ export const getGachaLogs = (params) => {
 }
 
 /**
- * 配置抽卡规则
+ * 创建抽卡规则
  */
-export const setGachaRule = (params) => {
-  return adminApi.post('/admin/gacha/rule', params, params.data)
+export const createGachaRule = (params) => {
+  return adminApi.post('/admin/gacha/rule/create', params, params.data)
 }
 
+/**
+ * 更新抽卡规则
+ */
+export const updateGachaRule = (params) => {
+  return adminApi.post('/admin/gacha/rule/update', params, params.data)
+}
+
+/**
+ * 查询抽卡规则
+ */
 export const getGachaRule = (params) => {
   return adminApi.get('/admin/gacha/rules', params)
 }
 
 /**
- * 配置英雄属性
+ * 删除抽卡规则
  */
-export const setHeroAttr = (params) => {
-  return adminApi.post('/admin/hero/attr', params, params.data)
+export const deleteGachaRule = (params) => {
+  return adminApi.post('/admin/gacha/rule/delete', params, params.data)
+}
+
+/**
+ * 创建英雄
+ */
+export const createHero = (params) => {
+  return adminApi.post('/admin/hero/create', params, params.data)
+}
+
+/**
+ * 更新英雄
+ */
+export const updateHero = (params) => {
+  return adminApi.post('/admin/hero/update', params, params.data)
+}
+
+/**
+ * 删除英雄
+ */
+export const deleteHero = (params) => {
+  return adminApi.post('/admin/hero/delete', params, params.data)
 }
 
 /**
@@ -201,27 +331,108 @@ export const importHeroes = (params) => {
 }
 
 /**
- * 创建/更新英雄
+ * 导出英雄数据
  */
-export const manageHero = (params) => {
-  return adminApi.post('/admin/hero/manage', params, params.data)
+export const exportHero = (params) => {
+  return adminApi.get('/admin/hero/export', params)
 }
 
 /**
- * 创建/更新道具
+ * 创建英雄属性
  */
-export const manageItem = (params) => {
-  return adminApi.post('/admin/item/manage', params, params.data)
+export const createHeroAttr = (params) => {
+  return adminApi.post('/admin/hero/attr/create', params, params.data)
 }
+
+/**
+ * 查询英雄属性
+ */
+export const queryHeroAttr = (params) => {
+  return adminApi.get('/admin/hero/attr/query', params)
+}
+
+/**
+ * 更新英雄属性
+ */
+export const updateHeroAttr = (params) => {
+  return adminApi.post('/admin/hero/attr/update', params, params.data)
+}
+
+/**
+ * 删除英雄属性
+ */
+export const deleteHeroAttr = (params) => {
+  return adminApi.post('/admin/hero/attr/delete', params, params.data)
+}
+
+/**
+ * 批量导入英雄属性
+ */
+export const batchImportHeroAttr = (params) => {
+  return adminApi.post('/admin/hero/attr/import', params, params.data)
+}
+
+/**
+ * 批量导出英雄属性
+ */
+export const exportHeroAttr = (params) => {
+  return adminApi.get('/admin/hero/attr/export', params)
+}
+
+/**
+ * 创建道具
+ */
+export const createItem = (params) => {
+  return adminApi.post('/admin/item/create', params, params.data)
+}
+
+/**
+ * 更新道具
+ */
+export const updateItem = (params) => {
+  return adminApi.post('/admin/item/update', params, params.data)
+}
+
+/**
+ * 查询道具
+ */
+export const getItemList = (params) => {
+  return adminApi.get('/admin/items', params)
+}
+
+/**
+ * 删除道具
+ */
 export const deleteItem = (params) => {
   return adminApi.post('/admin/item/delete', params, params.data)
 }
 
 /**
- * 创建/更新NPC
+ * 创建NPC
  */
-export const manageNPC = (params) => {
-  return adminApi.post('/admin/npc/manage', params, params.data)
+export const createNPC = (params) => {
+  return adminApi.post('/admin/npc/create', params, params.data)
+}
+
+/**
+ * 更新NPC
+ */
+export const updateNPC = (params) => {
+  return adminApi.post('/admin/npc/update', params, params.data)
+}
+
+/**
+ * 查询NPC
+ */
+export const getNPCList = (params) => {
+  return adminApi.get('/admin/npcs', params)
+}
+
+/**
+ * 删除NPC
+ */
+export const deleteNPC = (params) => {
+  return adminApi.post('/admin/npc/delete', params, params.data)
 }
 
 /**
@@ -281,15 +492,57 @@ export const updateUser = (params) => {
 }
 
 /**
- * 创建/更新卡池
+ * 创建卡池
  */
-export const managePool = (params) => {
-  return adminApi.post('/admin/pool/manage', params, params.data)
+export const createPool = (params) => {
+  return adminApi.post('/admin/pool/create', params, params.data)
 }
 
 /**
- * 配置卡池概率
+ * 更新卡池
  */
-export const managePoolProb = (params) => {
-  return adminApi.post('/admin/pool/prob', params, params.data)
+export const updatePool = (params) => {
+  return adminApi.post('/admin/pool/update', params, params.data)
+}
+
+/**
+ * 查询卡池
+ */
+export const queryPool = (params) => {
+  return adminApi.get('/admin/pools', params)
+}
+
+/**
+ * 删除卡池
+ */
+export const deletePool = (params) => {
+  return adminApi.post('/admin/pool/delete', params, params.data)
+}
+
+/**
+ * 创建概率配置
+ */
+export const createProb = (params) => {
+  return adminApi.post('/admin/pool/prob/create', params, params.data)
+}
+
+/**
+ * 更新概率配置
+ */
+export const updateProb = (params) => {
+  return adminApi.post('/admin/pool/prob/update', params, params.data)
+}
+
+/**
+ * 查询概率配置
+ */
+export const queryProb = (params) => {
+  return adminApi.get('/admin/pool/probs', params)
+}
+
+/**
+ * 删除概率配置
+ */
+export const deleteProb = (params) => {
+  return adminApi.post('/admin/pool/prob/delete', params, params.data)
 }

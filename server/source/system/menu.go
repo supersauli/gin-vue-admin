@@ -61,6 +61,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "systemTools", Name: "systemTools", Component: "view/systemTools/index.vue", Sort: 5, Meta: Meta{Title: "系统工具", Icon: "tools"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "state", Name: "state", Component: "view/system/state.vue", Sort: 8, Meta: Meta{Title: "服务器状态", Icon: "cloudy"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "plugin", Name: "plugin", Component: "view/routerHolder.vue", Sort: 6, Meta: Meta{Title: "插件系统", Icon: "cherry"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "gameAdmin", Name: "gameAdmin", Component: "view/admin/index.vue", Sort: 2, Meta: Meta{Title: "游戏管理", Icon: "computer"}},
 	}
 
 	// 先创建父级菜单（ParentId = 0 的菜单）
@@ -112,6 +113,16 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["plugin"], Path: "pubPlug", Name: "pubPlug", Component: "view/systemTools/pubPlug/pubPlug.vue", Sort: 3, Meta: Meta{Title: "打包插件", Icon: "files"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["plugin"], Path: "plugin-email", Name: "plugin-email", Component: "plugin/email/view/index.vue", Sort: 4, Meta: Meta{Title: "邮件插件", Icon: "message"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["plugin"], Path: "anInfo", Name: "anInfo", Component: "plugin/announcement/view/info.vue", Sort: 5, Meta: Meta{Title: "公告管理[示例]", Icon: "scaleToOriginal"}},
+
+		// gameAdmin子菜单
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "player", Name: "player", Component: "view/admin/player/index.vue", Sort: 1, Meta: Meta{Title: "玩家管理", Icon: "user"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "user", Name: "gameUser", Component: "view/admin/user/index.vue", Sort: 2, Meta: Meta{Title: "用户管理", Icon: "people"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "wallet", Name: "wallet", Component: "view/admin/wallet/index.vue", Sort: 3, Meta: Meta{Title: "钱包管理", Icon: "wallet"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "hero", Name: "hero", Component: "view/admin/hero/index.vue", Sort: 4, Meta: Meta{Title: "英雄管理", Icon: "star"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "pool", Name: "pool", Component: "view/admin/pool/index.vue", Sort: 5, Meta: Meta{Title: "池管理", Icon: "collection"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "item", Name: "item", Component: "view/admin/item/index.vue", Sort: 6, Meta: Meta{Title: "物品管理", Icon: "goods"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "npc", Name: "npc", Component: "view/admin/npc/index.vue", Sort: 7, Meta: Meta{Title: "NPC管理", Icon: "tickets"}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["gameAdmin"], Path: "gacha", Name: "gacha", Component: "view/admin/gacha/index.vue", Sort: 8, Meta: Meta{Title: "抽奖管理", Icon: "lottery"}},
 	}
 
 	// 创建子菜单

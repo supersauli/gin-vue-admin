@@ -1,6 +1,8 @@
 networks:
   gva-network:
     driver: bridge
+  account_entry_wechat-network:
+    external: true
 
 volumes:
   pgsql-data:
@@ -52,6 +54,7 @@ services:
       - ./server/config.docker.yaml:/go/src/github.com/flipped-aurora/gin-vue-admin/server/config.docker.yaml
     networks:
       - gva-network
+      - account_entry_wechat-network
 
   pgsql:
     image: postgres:15-alpine

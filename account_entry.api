@@ -1,0 +1,1151 @@
+syntax = "v1"
+
+info (
+	title:   "微信小游戏登录 API + 游戏抽卡系统"
+	desc:    "微信小游戏登录、用户管理及游戏抽卡接口"
+	author:  "Your Name"
+	email:   "your.email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// ==================== 基础类型 ====================
+	// 登录请求
+	LoginRequest {
+		Code string `json:"code"` // 微信小游戏登录凭证
+	}
+	// 登录响应
+	LoginResponse {
+		Token        string   `json:"token"` // JWT 令牌
+		RefreshToken string   `json:"refreshToken"` // 刷新令牌
+		UserInfo     UserInfo `json:"userInfo"` // 用户信息
+	}
+	// 用户信息
+	UserInfo {
+		AccountID int64  `json:"accountId,string"` // 账号 ID
+		OpenID    string `json:"openId"` // 用户 OpenID
+		UnionID   string `json:"unionId"` // 用户 UnionID
+		NickName  string `json:"nickName"` // 昵称
+		AvatarUrl string `json:"avatarUrl"` // 头像 URL
+		Gender    int    `json:"gender"` // 性别
+		City      string `json:"city"` // 城市
+		Province  string `json:"province"` // 省份
+		Country   string `json:"country"` // 国家
+		Language  string `json:"language"` // 语言
+		CreatedAt int64  `json:"createdAt"` // 创建时间
+		UpdatedAt int64  `json:"updatedAt"` // 更新时间
+	}
+	PageInfo {
+		Page     int `json:"page,optional" form:"page,optional"` // 当前页码
+		PageSize int `json:"pageSize,optional" form:"pageSize,optional"` // 每页大小
+	}
+	// 获取用户信息请求
+	GetUserInfoRequest  {}
+	// 获取用户信息响应
+	GetUserInfoResponse {
+		UserInfo UserInfo `json:"userInfo"` // 用户信息
+	}
+	// 更新用户信息请求
+	UpdateUserInfoRequest {
+		OpenID    string `json:"openId"` // 用户 OpenID
+		NickName  string `json:"nickName"` // 昵称
+		AvatarUrl string `json:"avatarUrl"` // 头像 URL
+		Gender    int    `json:"gender"` // 性别
+		City      string `json:"city"` // 城市
+		Province  string `json:"province"` // 省份
+		Country   string `json:"country"` // 国家
+		Language  string `json:"language"` // 语言
+	}
+	// 通用响应
+	CommonResponse {
+		Code    int    `json:"code"` // 状态码
+		Message string `json:"message"` // 消息
+		Data    string `json:"data"` // 数据
+	}
+	// ==================== 游戏数据相关 ====================
+	GetPlayerRequest  {}
+	GetPlayerResponse {
+		Data string `json:"data"` // 玩家数据
+	}
+	SavePlayerRequest {
+		Data string `json:"data"` // 玩家数据
+	}
+	SaveGameResponse {
+		Code    int    `json:"code"` // 状态码
+		Message string `json:"message"` // 消息
+		Data    string `json:"data"` // 数据
+	}
+	RefreshTokenRequest {
+		RefreshToken string `json:"refreshToken"` // JWT 令牌
+	}
+	RefreshTokenResponse {
+		Token        string `json:"token"` // JWT 令牌
+		RefreshToken string `json:"refreshToken"` // JWT 令牌
+	}
+	// ==================== 抽卡系统类型 ====================
+	// 抽卡请求
+	GachaDrawRequest {
+		PoolID int `json:"poolId"` // 卡池ID，0表示使用默认卡池
+		Times  int `json:"times"` // 抽卡次数 (1-10)，1为单抽，10为十连抽
+		ItemID int `json:"itemId"` // 消耗道具ID，0表示使用货币
+	}
+	// 抽卡响应
+	GachaDrawResponse {
+		Results []GachaResult `json:"results"` // 抽卡结果列表
+		Total   int           `json:"total"` // 总次数
+		Cost    GachaCost     `json:"cost"` // 消耗信息
+	}
+	// 单次抽卡结果
+	GachaResult {
+		HeroID      int    `json:"heroId"` // 英雄ID
+		Name        string `json:"name"` // 英雄名称
+		Rarity      int    `json:"rarity"` // 稀有度 (1-普通, 2-稀有, 3-史诗, 4-传说)
+		IconURL     string `json:"iconUrl"` // 图标URL
+		ImageURL    string `json:"imageUrl"` // 图片URL
+		IsNew       bool   `json:"isNew"` // 是否新获得
+		IsGuarantee bool   `json:"isGuarantee"` // 是否保底获得
+	}
+	// 抽卡消耗信息
+	GachaCost {
+		Type   string  `json:"type"` // 消耗类型: currency/item
+		ID     int     `json:"id"` // 物品ID (货币为0)
+		Amount float64 `json:"amount"` // 消耗数量
+	}
+	// 获取卡池列表响应
+	GachaPoolsResponse {
+		Pools []GachaPoolInfo `json:"pools"` // 卡池列表
+	}
+	// 卡池信息
+	GachaPoolInfo {
+		PoolID      int               `json:"poolId"` // 卡池ID
+		Name        string            `json:"name"` // 卡池名称
+		Description string            `json:"description"` // 卡池描述
+		CostType    string            `json:"costType"` // 消耗类型
+		CostAmount  float64           `json:"costAmount"` // 单次抽卡消耗
+		IsActive    bool              `json:"isActive"` // 是否激活
+		StartTime   int64             `json:"startTime"` // 开始时间
+		EndTime     int64             `json:"endTime"` // 结束时间
+		Probability ProbabilityConfig `json:"probability"` // 概率配置
+	}
+	// 概率配置
+	ProbabilityConfig {
+		Rarity1 float64 `json:"rarity1"` // 普通概率 (%)
+		Rarity2 float64 `json:"rarity2"` // 稀有概率 (%)
+		Rarity3 float64 `json:"rarity3"` // 史诗概率 (%)
+		Rarity4 float64 `json:"rarity4"` // 传说概率 (%)
+	}
+	// 抽卡历史请求
+	GachaHistoryRequest {
+		PoolID int `json:"poolId,optional"` // 卡池ID，0表示所有卡池
+		PageInfo
+	}
+	// 抽卡历史响应
+	GachaHistoryResponse {
+		PageInfo
+		Records []GachaRecordInfo `json:"records"` // 记录列表
+		Total   int64             `json:"total"` // 总数
+	}
+	// 抽卡记录信息
+	GachaRecordInfo {
+		ID          int64  `json:"id"` // 记录ID
+		HeroID      int    `json:"heroId"` // 英雄ID
+		Name        string `json:"name"` // 英雄名称
+		Rarity      int    `json:"rarity"` // 稀有度
+		PoolID      int    `json:"poolId"` // 卡池ID
+		DrawTime    string `json:"drawTime"` // 抽卡时间
+		IsGuarantee bool   `json:"isGuarantee"` // 是否保底
+	}
+	// 抽卡统计响应
+	GachaStatisticsResponse {
+		PoolID int              `json:"poolId"` // 卡池ID
+		Counts map[string]int64 `json:"counts"` // 各稀有度数量统计
+		Total  int64            `json:"total"` // 总抽卡数
+	}
+	// ==================== 英雄系统类型 ====================
+	// 英雄列表响应
+	HeroListResponse {
+		Heroes []HeroInfo `json:"heroes"` // 英雄列表
+	}
+	// 英雄信息
+	HeroInfo {
+		HeroID     int    `json:"heroId"` // 英雄ID
+		Name       string `json:"name"` // 英雄名称
+		Rarity     int    `json:"rarity"` // 稀有度
+		IconURL    string `json:"iconUrl"` // 图标URL
+		ImageURL   string `json:"imageURL"` // 图片URL
+		IsActive   bool   `json:"isActive"` // 是否在奖池中
+		Attributes string `json:"attributes"` // 英雄属性(JSON)
+	}
+	// 用户拥有英雄列表响应
+	UserHeroListResponse {
+		Heroes []UserHeroInfo `json:"heroes"` // 用户英雄列表
+	}
+	// 用户英雄信息
+	UserHeroInfo {
+		ID         int64  `json:"id"` // 记录ID
+		HeroID     int    `json:"heroId"` // 英雄ID
+		Name       string `json:"name"` // 英雄名称
+		Rarity     int    `json:"rarity"` // 稀有度
+		Level      int    `json:"level"` // 等级
+		Star       int    `json:"star"` // 星级
+		Exp        int    `json:"exp"` // 经验值
+		Power      int    `json:"power"` // 战力
+		IsEquipped bool   `json:"isEquipped"` // 是否已装备
+		ObtainTime string `json:"obtainTime"` // 获取时间
+	}
+	// 装备/卸下英雄请求
+	EquipHeroRequest {
+		HeroID int `json:"heroId"` // 英雄ID
+	}
+	// 升级英雄请求
+	UpgradeHeroRequest {
+		HeroID int `json:"heroId"` // 英雄ID
+		Exp    int `json:"exp"` // 增加的经验值
+	}
+	// ==================== 道具系统类型 ====================
+	// 道具列表响应
+	ItemListResponse {
+		Items []ItemInfo `json:"items"` // 道具列表
+	}
+	// 道具信息
+	ItemInfo {
+		ItemID   int    `json:"itemId"` // 道具ID
+		Name     string `json:"name"` // 道具名称
+		Type     string `json:"type"` // 道具类型
+		SubType  string `json:"subType"` // 子类型
+		Desc     string `json:"desc"` // 道具描述
+		IconURL  string `json:"iconUrl"` // 图标URL
+		Rarity   int    `json:"rarity"` // 稀有度
+		MaxStack int    `json:"maxStack"` // 最大堆叠数
+	}
+	// 用户道具列表响应
+	UserItemListResponse {
+		Items []UserItemInfo `json:"items"` // 用户道具列表
+	}
+	// 用户道具信息
+	UserItemInfo {
+		ItemID     int    `json:"itemId"` // 道具ID
+		Name       string `json:"name"` // 道具名称
+		Type       string `json:"type"` // 道具类型
+		Quantity   int    `json:"quantity"` // 数量
+		IconURL    string `json:"iconUrl"` // 图标URL
+		ExpireTime string `json:"expireTime"` // 过期时间
+	}
+	// ==================== NPC系统类型 ====================
+	// NPC列表响应
+	NPCListResponse {
+		NPCs []NPCInfo `json:"npcs"` // NPC列表
+	}
+	// NPC信息
+	NPCInfo {
+		NpcID      int    `json:"npcId"` // NPC ID
+		Name       string `json:"name"` // NPC名称
+		Type       string `json:"type"` // NPC类型
+		SubType    string `json:"subType"` // 子类型
+		Level      int    `json:"level"` // 等级
+		Desc       string `json:"desc"` // 描述
+		IconURL    string `json:"iconUrl"` // 图标URL
+		Model      string `json:"model"` // 模型
+		Attributes string `json:"attributes"` // 属性(JSON)
+		Skills     string `json:"skills"` // 技能(JSON数组)
+	}
+	// ==================== 管理员相关类型 ====================
+	// 玩家信息
+	PlayerInfo {
+		ID        int64  `json:"id"` // 玩家 ID
+		AccountID int64  `json:"accountId,string,optional"` // 账号 ID
+		Data      string `json:"data"` // 玩家数据
+		CreatedAt int64  `json:"createdAt"` // 创建时间
+		UpdatedAt int64  `json:"updatedAt"` // 更新时间
+	}
+	// 查询玩家请求
+	QueryPlayerRequest {
+		PageInfo
+		AccountID int64 `form:"accountId,string,optional"` // 账号 ID
+		StartTime int64 `form:"startTime,optional"`
+		EndTime   int64 `form:"endTime,optional"`
+	}
+	// 查询玩家响应
+	QueryPlayerResponse {
+		Total int64         `json:"total"` // 总数
+		List  []*PlayerInfo `json:"list"` // 玩家列表
+		PageInfo
+	}
+	// 创建玩家请求
+	CreatePlayerRequest {
+		AccountID int64  `json:"accountId,string,optional"` // 账号 ID
+		Data      string `json:"data"` // 玩家数据
+	}
+	// 创建玩家响应
+	CreatePlayerResponse {
+		ID int64 `json:"id"` // 创建的玩家 ID
+	}
+	// 更新玩家请求
+	UpdatePlayerRequest {
+		ID        int64  `json:"id"` // 玩家 ID
+		AccountID int64  `json:"accountId,string,optional"` // 账号 ID
+		Data      string `json:"data"` // 玩家数据
+	}
+	// 更新玩家响应
+	UpdatePlayerResponse {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 删除玩家请求
+	DeletePlayerRequest {
+		ID int64 `json:"id"` // 玩家 ID
+	}
+	// 删除玩家响应
+	DeletePlayerResponse {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 查询用户请求
+	QueryUserRequest {
+		AccountID int64 `form:"accountId,string,optional"` // 账号 ID
+		PageInfo
+		StartTime int64 `form:"startTime,optional"`
+		EndTime   int64 `form:"endTime,optional"`
+	}
+	// 查询用户响应
+	QueryUserResponse {
+		Total int64       `json:"total"` // 总数
+		List  []*UserInfo `json:"list"` // 用户列表
+		PageInfo
+	}
+	// 获取用户钱包请求
+	GetUserWalletsRequest {
+		AccountID int64 `form:"accountId,string,optional"` // 用户账号ID，0表示查询所有
+		PageInfo
+	}
+	// 用户钱包信息
+	UserWalletInfo {
+		AccountID int64   `json:"accountId,string"` // 账号 ID
+		Currency  string  `json:"currency"` // 货币类型
+		Balance   float64 `json:"balance"` // 余额
+	}
+	// 获取用户钱包响应
+	GetUserWalletsResponse {
+		Total int64             `json:"total"` // 总数
+		List  []*UserWalletInfo `json:"list"` // 用户钱包列表
+		PageInfo
+	}
+	// 创建用户请求
+	CreateUserRequest {
+		OpenID    string `json:"openId"` // 用户 OpenID
+		UnionID   string `json:"unionId"` // 用户 UnionID
+		NickName  string `json:"nickName"` // 昵称
+		AvatarUrl string `json:"avatarUrl"` // 头像 URL
+		Gender    int    `json:"gender"` // 性别
+		City      string `json:"city"` // 城市
+		Province  string `json:"province"` // 省份
+		Country   string `json:"country"` // 国家
+		Language  string `json:"language"` // 语言
+	}
+	// 创建用户响应
+	CreateUserResponse {
+		AccountID int64 `json:"accountId,string,optional"` // 账号 ID
+	}
+	// 更新用户请求
+	UpdateUserRequest {
+		AccountID int64  `json:"accountId,string,optional"` // 账号 ID
+		OpenID    string `json:"openId"` // 用户 OpenID
+		UnionID   string `json:"unionId"` // 用户 UnionID
+		NickName  string `json:"nickName"` // 昵称
+		AvatarUrl string `json:"avatarUrl"` // 头像 URL
+		Gender    int    `json:"gender"` // 性别
+		City      string `json:"city"` // 城市
+		Province  string `json:"province"` // 省份
+		Country   string `json:"country"` // 国家
+		Language  string `json:"language"` // 语言
+	}
+	// 更新用户响应
+	UpdateUserResponse {
+		Success bool `json:"success"` // 是否成功
+	}
+	// 删除用户请求
+	DeleteUserRequest {
+		AccountID int64 `json:"accountId,string,optional"` // 账号 ID
+	}
+	// 删除用户响应
+	DeleteUserResponse {
+		Success bool `json:"success"` // 是否成功
+	}
+	// ==================== 管理员-英雄查询 ====================
+	// 查询英雄请求
+	QueryHeroRequest {
+		HeroID   int    `form:"heroId,optional"` // 英雄ID，0表示查询所有
+		Name     string `form:"name,optional"` // 英雄名称模糊查询
+		Rarity   int    `form:"rarity,optional"` // 稀有度筛选 (1-4)
+		IsActive bool   `form:"isActive,optional"` // 激活状态筛选
+		PageInfo
+	}
+	// 管理员英雄信息（包含权重和属性）
+	AdminHeroInfo {
+		HeroID     int    `json:"heroId"` // 英雄ID
+		Name       string `json:"name"` // 英雄名称
+		Rarity     int    `json:"rarity"` // 稀有度
+		IconURL    string `json:"iconUrl"` // 图标URL
+		ImageURL   string `json:"imageUrl"` // 图片URL
+		IsActive   bool   `json:"isActive"` // 是否在奖池中
+		Weight     int    `json:"weight"` // 权重
+		Attributes string `json:"attributes"` // 英雄属性(JSON)
+		CreatedAt  string `json:"createdAt"` // 创建时间
+		UpdatedAt  string `json:"updatedAt"` // 更新时间
+	}
+	// 查询英雄响应
+	QueryHeroResponse {
+		Heroes []AdminHeroInfo `json:"heroes"` // 英雄列表
+		Total  int64           `json:"total"` // 总数
+		PageInfo
+	}
+	// 查询英雄列表响应
+	QueryHeroListResponse {
+		Heroes []AdminHeroInfo `json:"heroes"` // 英雄列表
+		Total  int64           `json:"total"` // 总数
+		PageInfo
+	}
+	// ==================== 管理员-英雄管理 ====================
+	// 英雄属性配置
+	HeroAttrInfo {
+		HeroID     int    `json:"heroId"` // 英雄ID
+		Level      int    `json:"level"` // 等级
+		Attack     int    `json:"attack"` // 攻击力
+		Defense    int    `json:"defense"` // 防御力
+		HP         int    `json:"hp"` // 生命值
+		Speed      int    `json:"speed"` // 速度
+		CritRate   int    `json:"critRate"` // 暴击率
+		CritDamage int    `json:"critDamage"` // 暴击伤害
+		Skills     string `json:"skills"` // 技能(JSON数组)
+		ExtraAttrs string `json:"extraAttrs"` // 额外属性(JSON)
+	}
+	// 创建英雄请求
+	CreateHeroRequest {
+		HeroID     int    `json:"heroId"` // 英雄ID
+		Name       string `json:"name"` // 英雄名称
+		Rarity     int    `json:"rarity"` // 稀有度 (1-4)
+		IconURL    string `json:"iconUrl"` // 图标URL
+		ImageURL   string `json:"imageUrl"` // 图片URL
+		IsActive   bool   `json:"isActive"` // 是否在奖池中
+		Weight     int    `json:"weight"` // 权重
+		Attributes string `json:"attributes"` // 英雄属性(JSON)
+	}
+	// 更新英雄请求
+	UpdateHeroRequest {
+		HeroID     int    `json:"heroId"` // 英雄ID
+		Name       string `json:"name"` // 英雄名称
+		Rarity     int    `json:"rarity"` // 稀有度 (1-4)
+		IconURL    string `json:"iconUrl"` // 图标URL
+		ImageURL   string `json:"imageUrl"` // 图片URL
+		IsActive   bool   `json:"isActive"` // 是否在奖池中
+		Weight     int    `json:"weight"` // 权重
+		Attributes string `json:"attributes"` // 英雄属性(JSON)
+	}
+	// 删除英雄请求
+	DeleteHeroRequest {
+		HeroID int `json:"heroId"` // 英雄ID
+	}
+	// 创建英雄响应
+	CreateHeroResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 更新英雄响应
+	UpdateHeroResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 批量导入英雄请求
+	BatchImportHeroRequest {
+		Heroes []CreateHeroRequest `json:"heroes"` // 英雄列表
+	}
+	// 批量导入英雄响应
+	BatchImportHeroResponse {
+		Total    int `json:"total"` // 总数
+		Imported int `json:"imported"` // 成功数
+		Failed   int `json:"failed"` // 失败数
+	}
+	// 批量导入英雄属性请求
+	BatchImportHeroAttrRequest {
+		HeroAttrs []HeroAttrInfo `json:"heroAttrs"` // 英雄属性列表
+	}
+	// ==================== 管理员-卡池管理 ====================
+	// 创建卡池请求
+	CreatePoolRequest {
+		PoolID          int     `json:"poolId"` // 卡池ID
+		Name            string  `json:"name"` // 卡池名称
+		Description     string  `json:"description"` // 卡池描述
+		CostCurrency    string  `json:"costCurrency"` // 消耗货币类型
+		CostAmount      float64 `json:"costAmount"` // 单次抽卡消耗
+		ProbabilityJSON string  `json:"probabilityJson"` // 概率配置(JSON)
+		IsActive        bool    `json:"isActive"` // 是否激活
+		StartTime       int64   `json:"startTime"` // 开始时间
+		EndTime         int64   `json:"endTime"` // 结束时间
+	}
+	// 更新卡池请求
+	UpdatePoolRequest {
+		PoolID          int     `json:"poolId"` // 卡池ID
+		Name            string  `json:"name"` // 卡池名称
+		Description     string  `json:"description"` // 卡池描述
+		CostCurrency    string  `json:"costCurrency"` // 消耗货币类型
+		CostAmount      float64 `json:"costAmount"` // 单次抽卡消耗
+		ProbabilityJSON string  `json:"probabilityJson"` // 概率配置(JSON)
+		IsActive        bool    `json:"isActive"` // 是否激活
+		StartTime       int64   `json:"startTime"` // 开始时间
+		EndTime         int64   `json:"endTime"` // 结束时间
+	}
+	// 创建卡池响应
+	CreatePoolResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 更新卡池响应
+	UpdatePoolResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// ==================== 管理员-概率配置 ====================
+	// 创建概率配置请求
+	CreateProbRequest {
+		PoolID   int     `json:"poolId"` // 卡池ID
+		Rarity   int     `json:"rarity"` // 稀有度 (1-4)
+		BaseProb float64 `json:"baseProb"` // 基础概率 (%)
+		Weight   int     `json:"weight"` // 权重
+		HeroIDs  string  `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
+		IsActive bool    `json:"isActive"` // 是否激活
+	}
+	// 更新概率配置请求
+	UpdateProbRequest {
+		PoolID   int     `json:"poolId"` // 卡池ID
+		Rarity   int     `json:"rarity"` // 稀有度 (1-4)
+		BaseProb float64 `json:"baseProb"` // 基础概率 (%)
+		Weight   int     `json:"weight"` // 权重
+		HeroIDs  string  `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
+		IsActive bool    `json:"isActive"` // 是否激活
+	}
+	// 查询概率配置请求
+	QueryProbRequest {
+		PoolID   int  `form:"poolId,optional"` // 卡池ID
+		Rarity   int  `form:"rarity,optional"` // 稀有度 (1-4)
+		IsActive bool `form:"isActive,optional"` // 激活状态筛选
+		PageInfo
+	}
+	// 查询卡池请求
+	QueryPoolRequest {
+		PoolID    int    `form:"poolId,optional"` // 卡池ID，0表示查询所有
+		Name      string `form:"name,optional"` // 卡池名称模糊查询
+		IsActive  bool   `form:"isActive,optional"` // 激活状态筛选
+		StartTime int64  `form:"startTime,optional"` // 开始时间筛选
+		EndTime   int64  `form:"endTime,optional"` // 结束时间筛选
+		PageInfo
+	}
+	// 概率配置信息
+	ProbInfo {
+		PoolID    int     `json:"poolId"` // 卡池ID
+		Rarity    int     `json:"rarity"` // 稀有度 (1-4)
+		BaseProb  float64 `json:"baseProb"` // 基础概率 (%)
+		Weight    int     `json:"weight"` // 权重
+		HeroIDs   []int   `json:"heroIds"` // 包含的英雄ID列表
+		IsActive  bool    `json:"isActive"` // 是否激活
+		CreatedAt string  `json:"createdAt"` // 创建时间
+		UpdatedAt string  `json:"updatedAt"` // 更新时间
+	}
+	// 查询概率配置响应
+	QueryProbResponse {
+		Probs []ProbInfo `json:"probs"` // 概率配置列表
+		Total int64      `json:"total"` // 总数
+		PageInfo
+	}
+	// 查询卡池响应
+	QueryPoolResponse {
+		Pools []GachaPoolInfo `json:"pools"` // 卡池列表
+		Total int64           `json:"total"` // 总数
+		PageInfo
+	}
+	// 创建概率配置响应
+	CreateProbResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 更新概率配置响应
+	UpdateProbResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 删除概率配置请求
+	DeleteProbRequest {
+		PoolID int `json:"poolId"` // 卡池ID
+		Rarity int `json:"rarity"` // 稀有度 (1-4)
+	}
+	// 删除卡池请求
+	DeletePoolRequest {
+		PoolID int `json:"poolId"` // 卡池ID
+	}
+	// ==================== 管理员-抽卡规则 ====================
+	// 创建抽卡规则请求
+	CreateRuleRequest {
+		PoolID             int     `json:"poolId"` // 卡池ID
+		RuleName           string  `json:"ruleName"` // 规则名称
+		DrawType           int     `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
+		CostCurrency       string  `json:"costCurrency"` // 消耗货币类型
+		CostAmount         float64 `json:"costAmount"` // 消耗数量
+		Discount           float64 `json:"discount"` // 折扣
+		GuaranteeRarity    int     `json:"guaranteeRarity"` // 保底稀有度
+		GuaranteeDraws     int     `json:"guaranteeDraws"` // 保底抽数
+		GuaranteeMaxRarity int     `json:"guaranteeMaxRarity"` // 保底最高稀有度
+		DailyLimit         int     `json:"dailyLimit"` // 每日限制
+		WeeklyLimit        int     `json:"weeklyLimit"` // 每周限制
+		MonthlyLimit       int     `json:"monthlyLimit"` // 每月限制
+		IsActive           bool    `json:"isActive"` // 是否激活
+	}
+	// 更新抽卡规则请求
+	UpdateRuleRequest {
+		PoolID             int     `json:"poolId"` // 卡池ID
+		RuleName           string  `json:"ruleName"` // 规则名称
+		DrawType           int     `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
+		CostCurrency       string  `json:"costCurrency"` // 消耗货币类型
+		CostAmount         float64 `json:"costAmount"` // 消耗数量
+		Discount           float64 `json:"discount"` // 折扣
+		GuaranteeRarity    int     `json:"guaranteeRarity"` // 保底稀有度
+		GuaranteeDraws     int     `json:"guaranteeDraws"` // 保底抽数
+		GuaranteeMaxRarity int     `json:"guaranteeMaxRarity"` // 保底最高稀有度
+		DailyLimit         int     `json:"dailyLimit"` // 每日限制
+		WeeklyLimit        int     `json:"weeklyLimit"` // 每周限制
+		MonthlyLimit       int     `json:"monthlyLimit"` // 每月限制
+		IsActive           bool    `json:"isActive"` // 是否激活
+	}
+	// 创建抽卡规则响应
+	CreateRuleResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 更新抽卡规则响应
+	UpdateRuleResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 查询抽卡规则请求
+	QueryRuleRequest {
+		PoolID   int    `form:"poolId,optional"` // 卡池ID，0表示查询所有
+		RuleName string `form:"ruleName,optional"` // 规则名称模糊查询
+		IsActive bool   `form:"isActive,optional"` // 激活状态筛选
+		PageInfo
+	}
+	// 抽卡规则信息
+	RuleInfo {
+		PoolID             int     `json:"poolId"` // 卡池ID
+		RuleName           string  `json:"ruleName"` // 规则名称
+		DrawType           int     `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
+		CostCurrency       string  `json:"costCurrency"` // 消耗货币类型
+		CostAmount         float64 `json:"costAmount"` // 消耗数量
+		Discount           float64 `json:"discount"` // 折扣
+		GuaranteeRarity    int     `json:"guaranteeRarity"` // 保底稀有度
+		GuaranteeDraws     int     `json:"guaranteeDraws"` // 保底抽数
+		GuaranteeMaxRarity int     `json:"guaranteeMaxRarity"` // 保底最高稀有度
+		DailyLimit         int     `json:"dailyLimit"` // 每日限制
+		WeeklyLimit        int     `json:"weeklyLimit"` // 每周限制
+		MonthlyLimit       int     `json:"monthlyLimit"` // 每月限制
+		IsActive           bool    `json:"isActive"` // 是否激活
+		CreatedAt          string  `json:"createdAt"` // 创建时间
+		UpdatedAt          string  `json:"updatedAt"` // 更新时间
+	}
+	// 查询抽卡规则响应
+	QueryRuleResponse {
+		Rules []RuleInfo `json:"rules"` // 规则列表
+		Total int64      `json:"total"` // 总数
+		PageInfo
+	}
+	// 删除抽卡规则请求
+	DeleteRuleRequest {
+		PoolID   int    `json:"poolId"` // 卡池ID
+		RuleName string `json:"ruleName"` // 规则名称
+	}
+	// ==================== 管理员-抽卡日志查询 ====================
+	// 查询抽卡日志请求
+	QueryGachaLogRequest {
+		AccountID int64 `form:"accountId,string,optional"` // 用户ID
+		PoolID    int   `form:"poolId,optional"` // 卡池ID
+		StartTime int64 `form:"startTime,optional"` // 开始时间
+		EndTime   int64 `form:"endTime,optional"` // 结束时间
+		PageInfo
+	}
+	// 查询抽卡日志响应
+	QueryGachaLogResponse {
+		Logs  []GachaLogInfo `json:"logs"` // 日志列表
+		Total int64          `json:"total"` // 总数
+		PageInfo
+	}
+	// 抽卡日志详情
+	GachaLogInfo {
+		ID          int64   `json:"id"` // 日志ID
+		AccountID   int64   `json:"accountId"` // 用户ID
+		PoolID      int     `json:"poolId"` // 卡池ID
+		DrawType    int     `json:"drawType"` // 抽卡类型
+		Times       int     `json:"times"` // 抽卡次数
+		CostType    string  `json:"costType"` // 消耗类型
+		CostAmount  float64 `json:"costAmount"` // 消耗数量
+		HeroID      int     `json:"heroId"` // 抽到的英雄ID
+		HeroName    string  `json:"heroName"` // 英雄名称
+		Rarity      int     `json:"rarity"` // 稀有度
+		IsGuarantee bool    `json:"isGuarantee"` // 是否保底
+		Status      int     `json:"status"` // 状态
+		DrawTime    string  `json:"drawTime"` // 抽卡时间
+	}
+	// ==================== 管理员-道具管理 ====================
+	// 创建道具请求
+	CreateItemRequest {
+		ItemID     int    `json:"itemId"` // 道具ID
+		Name       string `json:"name"` // 道具名称
+		Type       string `json:"type"` // 道具类型
+		SubType    string `json:"subType"` // 子类型
+		Desc       string `json:"desc"` // 道具描述
+		IconURL    string `json:"iconUrl"` // 图标URL
+		Rarity     int    `json:"rarity"` // 稀有度
+		MaxStack   int    `json:"maxStack"` // 最大堆叠数
+		UseLevel   int    `json:"useLevel"` // 使用等级限制
+		Price      int    `json:"price"` // 售价
+		IsSellable bool   `json:"isSellable"` // 是否可出售
+		IsConsume  bool   `json:"isConsume"` // 是否消耗品
+	}
+	// 更新道具请求
+	UpdateItemRequest {
+		ItemID     int    `json:"itemId"` // 道具ID
+		Name       string `json:"name"` // 道具名称
+		Type       string `json:"type"` // 道具类型
+		SubType    string `json:"subType"` // 子类型
+		Desc       string `json:"desc"` // 道具描述
+		IconURL    string `json:"iconUrl"` // 图标URL
+		Rarity     int    `json:"rarity"` // 稀有度
+		MaxStack   int    `json:"maxStack"` // 最大堆叠数
+		UseLevel   int    `json:"useLevel"` // 使用等级限制
+		Price      int    `json:"price"` // 售价
+		IsSellable bool   `json:"isSellable"` // 是否可出售
+		IsConsume  bool   `json:"isConsume"` // 是否消耗品
+	}
+	// 创建道具响应
+	CreateItemResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 更新道具响应
+	UpdateItemResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 查询道具请求
+	QueryItemRequest {
+		ItemID    int    `form:"itemId,optional"` // 道具ID，0表示查询所有
+		Name      string `form:"name,optional"` // 道具名称模糊查询
+		Type      string `form:"type,optional"` // 道具类型筛选
+		Rarity    int    `form:"rarity,optional"` // 稀有度筛选
+		IsConsume bool   `form:"isConsume,optional"` // 是否消耗品筛选
+		PageInfo
+	}
+	// 道具信息（包含库存）
+	ItemInfoWithStock {
+		ItemID     int    `json:"itemId"` // 道具ID
+		Name       string `json:"name"` // 道具名称
+		Type       string `json:"type"` // 道具类型
+		SubType    string `json:"subType"` // 子类型
+		Desc       string `json:"desc"` // 道具描述
+		IconURL    string `json:"iconUrl"` // 图标URL
+		Rarity     int    `json:"rarity"` // 稀有度
+		MaxStack   int    `json:"maxStack"` // 最大堆叠数
+		UseLevel   int    `json:"useLevel"` // 使用等级限制
+		Price      int    `json:"price"` // 售价
+		IsSellable bool   `json:"isSellable"` // 是否可出售
+		IsConsume  bool   `json:"isConsume"` // 是否消耗品
+		TotalStock int64  `json:"totalStock"` // 总库存量
+		CreatedAt  string `json:"createdAt"` // 创建时间
+		UpdatedAt  string `json:"updatedAt"` // 更新时间
+	}
+	// 查询道具响应
+	QueryItemResponse {
+		Items []ItemInfoWithStock `json:"items"` // 道具列表
+		Total int64               `json:"total"` // 总数
+		PageInfo
+	}
+	// 删除道具请求
+	DeleteItemRequest {
+		ItemID int `json:"itemId"` // 道具ID
+	}
+	// ==================== 管理员-NPC管理 ====================
+	// 创建NPC请求
+	CreateNPCRequest {
+		NpcID      int    `json:"npcId"` // NPC ID
+		Name       string `json:"name"` // NPC名称
+		Type       string `json:"type"` // NPC类型
+		SubType    string `json:"subType"` // 子类型
+		Level      int    `json:"level"` // 等级
+		Desc       string `json:"desc"` // 描述
+		IconURL    string `json:"iconUrl"` // 图标URL
+		Model      string `json:"model"` // 模型
+		Attributes string `json:"attributes"` // 属性(JSON)
+		Skills     string `json:"skills"` // 技能(JSON数组)
+		IsActive   bool   `json:"isActive"` // 是否激活
+	}
+	// 更新NPC请求
+	UpdateNPCRequest {
+		NpcID      int    `json:"npcId"` // NPC ID
+		Name       string `json:"name"` // NPC名称
+		Type       string `json:"type"` // NPC类型
+		SubType    string `json:"subType"` // 子类型
+		Level      int    `json:"level"` // 等级
+		Desc       string `json:"desc"` // 描述
+		IconURL    string `json:"iconUrl"` // 图标URL
+		Model      string `json:"model"` // 模型
+		Attributes string `json:"attributes"` // 属性(JSON)
+		Skills     string `json:"skills"` // 技能(JSON数组)
+		IsActive   bool   `json:"isActive"` // 是否激活
+	}
+	// 创建NPC响应
+	CreateNPCResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 更新NPC响应
+	UpdateNPCResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+	// 查询NPC请求
+	QueryNPCRequest {
+		NpcID    int    `form:"npcId,optional"` // NPC ID，0表示查询所有
+		Name     string `form:"name,optional"` // NPC名称模糊查询
+		Type     string `form:"type,optional"` // NPC类型筛选
+		Level    int    `form:"level,optional"` // 等级筛选
+		IsActive bool   `form:"isActive,optional"` // 激活状态筛选
+		PageInfo
+	}
+	// NPC信息（包含技能详情）
+	NPCQueryInfo {
+		NpcID      int      `json:"npcId"` // NPC ID
+		Name       string   `json:"name"` // NPC名称
+		Type       string   `json:"type"` // NPC类型
+		SubType    string   `json:"subType"` // 子类型
+		Level      int      `json:"level"` // 等级
+		Desc       string   `json:"desc"` // 描述
+		IconURL    string   `json:"iconUrl"` // 图标URL
+		Model      string   `json:"model"` // 模型
+		Attributes string   `json:"attributes"` // 属性(JSON)
+		Skills     []string `json:"skills"` // 技能(JSON数组)
+		IsActive   bool     `json:"isActive"` // 是否激活
+		CreatedAt  string   `json:"createdAt"` // 创建时间
+		UpdatedAt  string   `json:"updatedAt"` // 更新时间
+	}
+	// 查询NPC响应
+	QueryNPCResponse {
+		NPCs  []NPCQueryInfo `json:"npcs"` // NPC列表
+		Total int64          `json:"total"` // 总数
+		PageInfo
+	}
+	// 删除NPC请求
+	DeleteNPCRequest {
+		NpcID int `json:"npcId"` // NPC ID
+	}
+	// ==================== 管理员-货币管理 ====================
+	// 货币调整请求
+	CurrencyAdjustRequest {
+		AccountID int64   `json:"accountId"` // 用户ID
+		Currency  string  `json:"currency"` // 货币类型
+		Amount    float64 `json:"amount"` // 调整数量(正数增加，负数减少)
+		Reason    string  `json:"reason"` // 原因
+	}
+	// 货币调整响应
+	CurrencyAdjustResponse {
+		AccountID  int64   `json:"accountId"` // 用户ID
+		Currency   string  `json:"currency"` // 货币类型
+		NewBalance float64 `json:"newBalance"` // 新余额
+	}
+	// 创建用户钱包请求
+	CreateUserWalletRequest {
+		AccountID  int64   `json:"accountId,string"` // 账号 ID
+		Currency   string  `json:"currency"` // 货币类型
+		InitAmount float64 `json:"initAmount"` // 初始金额
+	}
+	// 创建用户钱包响应
+	CreateUserWalletResponse {
+		Success bool   `json:"success"` // 是否成功
+		Message string `json:"message"` // 消息
+	}
+)
+
+// ==================== 游戏客户端接口 ====================
+@server (
+	prefix:     /api/v1
+	middleware: CorsMiddleware,SignatureMiddleware
+)
+service accountentry {
+	@handler Login
+	post /auth/login (LoginRequest) returns (LoginResponse)
+
+	@handler GetUserInfo
+	get /user/info (GetUserInfoRequest) returns (GetUserInfoResponse)
+
+	@handler UpdateUserInfo
+	post /user/update_info (UpdateUserInfoRequest) returns (CommonResponse)
+}
+
+// 需要登录认证的接口
+@server (
+	prefix:     /api/v1
+	middleware: CorsMiddleware,AuthMiddleware,SignatureMiddleware
+)
+service accountentry {
+	@handler GetUserProfile
+	get /user/profile returns (GetUserInfoResponse)
+
+	@handler GetUserGamePlayer
+	get /game/get_player (GetPlayerRequest) returns (GetPlayerResponse)
+
+	@handler SaveUserGamePlayer
+	post /game/save_player (SavePlayerRequest) returns (SaveGameResponse)
+
+	@handler RefreshToken
+	post /auth/refresh_token (RefreshTokenRequest) returns (RefreshTokenResponse)
+
+	// ==================== 抽卡系统-客户端接口 ====================
+	@doc "获取当前激活的卡池列表"
+	@handler GetActiveGachaPools
+	get /gacha/pools returns (GachaPoolsResponse)
+
+	@doc "执行抽卡 (单抽/十连抽)"
+	@handler GachaDraw
+	post /gacha/draw (GachaDrawRequest) returns (GachaDrawResponse)
+
+	@doc "获取抽卡历史记录"
+	@handler QueryGachaHistory
+	get /gacha/history (GachaHistoryRequest) returns (GachaHistoryResponse)
+
+	@doc "获取抽卡统计数据"
+	@handler QueryGachaStatistics
+	get /gacha/statistics returns (GachaStatisticsResponse)
+
+	// ==================== 英雄系统-客户端接口 ====================
+	@doc "获取可抽取的英雄列表数据"
+	@handler GetHeroList
+	get /hero/list returns (HeroListResponse)
+
+	@doc "获取用户拥有的英雄列表数据"
+	@handler QueryUserHeroList
+	get /hero/my returns (UserHeroListResponse)
+
+	@doc "装备英雄数据"
+	@handler EquipUserHero
+	post /hero/equip (EquipHeroRequest) returns (CommonResponse)
+
+	@doc "卸下英雄数据"
+	@handler UnequipUserHero
+	post /hero/unequip (EquipHeroRequest) returns (CommonResponse)
+
+	@doc "升级英雄数据"
+	@handler UpgradeUserHero
+	post /hero/upgrade (UpgradeHeroRequest) returns (CommonResponse)
+
+	// ==================== 道具系统-客户端接口 ====================
+	@doc "获取道具列表数据(所有道具定义)"
+	@handler QueryItemList
+	get /item/list returns (ItemListResponse)
+
+	@doc "获取用户道具数据"
+	@handler QueryUserItemList
+	get /item/my returns (UserItemListResponse)
+
+	// ==================== NPC系统-客户端接口 ====================
+	@doc "获取NPC列表数据"
+	@handler QueryNPCList
+	get /npc/list returns (NPCListResponse)
+}
+
+// ==================== 管理后台接口 ====================
+@server (
+	prefix:     /api/v1
+	middleware: CorsMiddleware,AdminMiddleware,SignatureMiddleware
+)
+service accountentry {
+	// 玩家管理
+	@doc "查询玩家列表（分页）"
+	@handler QueryPlayer
+	get /admin/players (QueryPlayerRequest) returns (QueryPlayerResponse)
+
+	@doc "创建玩家"
+	@handler CreatePlayer
+	post /admin/players/create (CreatePlayerRequest) returns (CreatePlayerResponse)
+
+	@doc "更新玩家数据"
+	@handler UpdatePlayer
+	post /admin/players/update (UpdatePlayerRequest) returns (UpdatePlayerResponse)
+
+	@doc "删除玩家"
+	@handler DeletePlayer
+	post /admin/players/delete (DeletePlayerRequest) returns (DeletePlayerResponse)
+
+	// 用户管理
+	@doc "查询用户列表（分页）"
+	@handler QueryUser
+	get /admin/users (QueryUserRequest) returns (QueryUserResponse)
+
+	@doc "创建用户"
+	@handler CreateUser
+	post /admin/users/create (CreateUserRequest) returns (CreateUserResponse)
+
+	@doc "更新用户信息"
+	@handler UpdateUser
+	post /admin/users/update (UpdateUserRequest) returns (UpdateUserResponse)
+
+	@doc "删除用户"
+	@handler DeleteUser
+	post /admin/users/delete (DeleteUserRequest) returns (DeleteUserResponse)
+
+	// 钱包管理
+	@doc "获取用户钱包余额"
+	@handler QueryAdminWallet
+	get /admin/wallets (GetUserWalletsRequest) returns (GetUserWalletsResponse)
+
+	@doc "创建用户钱包"
+	@handler CreateAdminWallet
+	post /admin/wallet/create (CreateUserWalletRequest) returns (CreateUserWalletResponse)
+
+	@doc "调整用户货币"
+	@handler UpdateAdminCurrency
+	post /admin/currency/adjust (CurrencyAdjustRequest) returns (CurrencyAdjustResponse)
+
+	// ==================== 管理员-英雄管理 ====================
+	@doc "批量导入英雄数据"
+	@handler BatchImportHero
+	post /admin/hero/import (BatchImportHeroRequest) returns (BatchImportHeroResponse)
+
+	@doc "创建英雄数据"
+	@handler CreateHero
+	post /admin/hero/create (CreateHeroRequest) returns (CreateHeroResponse)
+
+	@doc "更新英雄数据"
+	@handler UpdateHero
+	post /admin/hero/update (UpdateHeroRequest) returns (UpdateHeroResponse)
+
+	@doc "删除英雄数据"
+	@handler DeleteHero
+	post /admin/hero/delete (DeleteHeroRequest) returns (CommonResponse)
+
+	@doc "导出英雄数据"
+	@handler ExportHero
+	get /admin/hero/export (QueryHeroRequest) returns (CommonResponse)
+
+	@doc "创建英雄属性数据"
+	@handler CreateHeroAttr
+	post /admin/hero/attr/create (HeroAttrInfo) returns (CommonResponse)
+
+	@doc "查询英雄属性数据"
+	@handler QueryHeroAttr
+	get /admin/hero/attr/query (QueryHeroRequest) returns (CommonResponse)
+
+	@doc "更新英雄属性数据"
+	@handler UpdateHeroAttr
+	post /admin/hero/attr/update (HeroAttrInfo) returns (CommonResponse)
+
+	@doc "删除英雄属性数据"
+	@handler DeleteHeroAttr
+	post /admin/hero/attr/delete (DeleteHeroRequest) returns (CommonResponse)
+
+	@doc "批量导入英雄属性数据"
+	@handler BatchImportHeroAttr
+	post /admin/hero/attr/import (BatchImportHeroAttrRequest) returns (CommonResponse)
+
+	@doc "批量导出英雄属性数据"
+	@handler ExportHeroAttr
+	get /admin/hero/attr/export (QueryHeroRequest) returns (CommonResponse)
+
+	// ==================== 管理员-英雄查询 ====================
+	@doc "查询英雄列表（支持按ID、名称、稀有度、状态筛选）"
+	@handler QueryHeroList
+	get /admin/hero/list (QueryHeroRequest) returns (QueryHeroListResponse)
+
+	// ==================== 管理员-卡池管理 ====================
+	@doc "创建卡池数据"
+	@handler CreatePool
+	post /admin/pool/create (CreatePoolRequest) returns (CreatePoolResponse)
+
+	@doc "更新卡池数据"
+	@handler UpdatePool
+	post /admin/pool/update (UpdatePoolRequest) returns (UpdatePoolResponse)
+
+	@doc "查询卡池"
+	@handler QueryPool
+	get /admin/pools (QueryPoolRequest) returns (QueryPoolResponse)
+
+	@doc "删除卡池"
+	@handler DeletePool
+	post /admin/pool/delete (DeletePoolRequest) returns (CommonResponse)
+
+	// ==================== 管理员-概率配置 ====================
+	@doc "创建概率配置"
+	@handler CreateProb
+	post /admin/pool/prob/create (CreateProbRequest) returns (CreateProbResponse)
+
+	@doc "更新概率配置"
+	@handler UpdateProb
+	post /admin/pool/prob/update (UpdateProbRequest) returns (UpdateProbResponse)
+
+	@doc "查询概率配置"
+	@handler QueryProb
+	get /admin/pool/probs (QueryProbRequest) returns (QueryProbResponse)
+
+	@doc "删除概率配置"
+	@handler DeleteProb
+	post /admin/pool/prob/delete (DeleteProbRequest) returns (CommonResponse)
+
+	// ==================== 管理员-抽卡规则 ====================
+	@doc "创建抽卡规则"
+	@handler CreateRule
+	post /admin/gacha/rule/create (CreateRuleRequest) returns (CreateRuleResponse)
+
+	@doc "更新抽卡规则"
+	@handler UpdateRule
+	post /admin/gacha/rule/update (UpdateRuleRequest) returns (UpdateRuleResponse)
+
+	@doc "查询抽卡规则"
+	@handler QueryRule
+	get /admin/gacha/rules (QueryRuleRequest) returns (QueryRuleResponse)
+
+	@doc "删除抽卡规则"
+	@handler DeleteRule
+	post /admin/gacha/rule/delete (DeleteRuleRequest) returns (CommonResponse)
+
+	// ==================== 管理员-抽卡日志查询 ====================
+	@doc "查询抽卡日志(支持按用户、卡池、时间筛选)"
+	@handler QueryGachaLog
+	get /admin/gacha/logs (QueryGachaLogRequest) returns (QueryGachaLogResponse)
+
+	// ==================== 管理员-道具管理 ====================
+	@doc "创建道具数据"
+	@handler CreateItem
+	post /admin/item/create (CreateItemRequest) returns (CreateItemResponse)
+
+	@doc "更新道具数据"
+	@handler UpdateItem
+	post /admin/item/update (UpdateItemRequest) returns (UpdateItemResponse)
+
+	@doc "查询道具"
+	@handler QueryItem
+	get /admin/items (QueryItemRequest) returns (QueryItemResponse)
+
+	@doc "删除道具数据"
+	@handler DeleteItem
+	post /admin/item/delete (DeleteItemRequest) returns (CommonResponse)
+
+	// ==================== 管理员-NPC管理 ====================
+	@doc "创建NPC数据"
+	@handler CreateNPC
+	post /admin/npc/create (CreateNPCRequest) returns (CreateNPCResponse)
+
+	@doc "更新NPC数据"
+	@handler UpdateNPC
+	post /admin/npc/update (UpdateNPCRequest) returns (UpdateNPCResponse)
+
+	@doc "查询NPC"
+	@handler QueryNPC
+	get /admin/npcs (QueryNPCRequest) returns (QueryNPCResponse)
+
+	@doc "删除NPC数据"
+	@handler DeleteNPC
+	post /admin/npc/delete (DeleteNPCRequest) returns (CommonResponse)
+}
+
