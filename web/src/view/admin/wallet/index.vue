@@ -29,6 +29,15 @@
       <el-form-item label="账号ID">
         <el-input v-model="searchForm.accountId" placeholder="请输入账号ID" />
       </el-form-item>
+      <el-form-item label="货币类型">
+        <el-input v-model="searchForm.currency" placeholder="请输入货币类型" />
+      </el-form-item>
+      <el-form-item label="余额最小值">
+        <el-input v-model="searchForm.minBalance" type="number" placeholder="请输入余额最小值" />
+      </el-form-item>
+      <el-form-item label="余额最大值">
+        <el-input v-model="searchForm.maxBalance" type="number" placeholder="请输入余额最大值" />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleSearch">查询</el-button>
         <el-button @click="resetForm">重置</el-button>
@@ -139,7 +148,10 @@ const walletList = ref([])
 
 // 搜索表单
 const searchForm = reactive({
-  accountId: ''
+  accountId: '',
+  currency: '',
+  minBalance: '',
+  maxBalance: ''
 })
 
 // 分页信息
@@ -197,6 +209,9 @@ const handleSearch = () => {
 // 重置表单
 const resetForm = () => {
   searchForm.accountId = ''
+  searchForm.currency = ''
+  searchForm.minBalance = ''
+  searchForm.maxBalance = ''
   pagination.page = 1
   getWallets()
 }
@@ -223,7 +238,10 @@ const getWallets = async () => {
       proxy: selectedGame.value,
       page: pagination.page,
       pageSize: pagination.pageSize,
-      accountId: searchForm.accountId
+      accountId: searchForm.accountId,
+      currency: searchForm.currency,
+      minBalance: searchForm.minBalance,
+      maxBalance: searchForm.maxBalance
     }
     const res = await getCurrencyList(params)
     if (res.code === 0) {
@@ -250,9 +268,14 @@ const handleCreateWallet = () => {
 // 提交创建钱包
 const handleCreateWalletSubmit = async () => {
   try {
+    // 确保initAmount是数字类型
+    const submitData = {
+      ...createForm,
+      initAmount: Number(createForm.initAmount)
+    }
     const res = await createUserWallet({ 
       proxy: selectedGame.value,
-      data: createForm 
+      data: submitData 
     })
     if (res.code === 0) {
       ElMessage.success('创建成功')

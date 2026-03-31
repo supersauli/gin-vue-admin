@@ -313,7 +313,10 @@ type (
 	}
 	// 获取用户钱包请求
 	GetUserWalletsRequest {
-		AccountID int64 `form:"accountId,string,optional"` // 用户账号ID，0表示查询所有
+		AccountID  int64   `form:"accountId,string,optional"` // 用户账号ID，0表示查询所有
+		Currency   string  `form:"currency,optional"` // 货币类型
+		MinBalance float64 `form:"minBalance,optional"` // 余额最小值
+		MaxBalance float64 `form:"maxBalance,optional"` // 余额最大值
 		PageInfo
 	}
 	// 用户钱包信息
@@ -375,7 +378,7 @@ type (
 		HeroID   int    `form:"heroId,optional"` // 英雄ID，0表示查询所有
 		Name     string `form:"name,optional"` // 英雄名称模糊查询
 		Rarity   int    `form:"rarity,optional"` // 稀有度筛选 (1-4)
-		IsActive bool   `form:"isActive,optional"` // 激活状态筛选
+		IsActive *bool  `form:"isActive,optional"` // 激活状态筛选
 		PageInfo
 	}
 	// 管理员英雄信息（包含权重和属性）
@@ -510,7 +513,7 @@ type (
 		BaseProb float64 `json:"baseProb"` // 基础概率 (%)
 		Weight   int     `json:"weight"` // 权重
 		HeroIDs  string  `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
-		IsActive bool    `json:"isActive"` // 是否激活
+		IsActive *bool   `json:"isActive"` // 是否激活
 	}
 	// 更新概率配置请求
 	UpdateProbRequest {
@@ -519,20 +522,20 @@ type (
 		BaseProb float64 `json:"baseProb"` // 基础概率 (%)
 		Weight   int     `json:"weight"` // 权重
 		HeroIDs  string  `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
-		IsActive bool    `json:"isActive"` // 是否激活
+		IsActive *bool   `json:"isActive"` // 是否激活
 	}
 	// 查询概率配置请求
 	QueryProbRequest {
-		PoolID   int  `form:"poolId,optional"` // 卡池ID
-		Rarity   int  `form:"rarity,optional"` // 稀有度 (1-4)
-		IsActive bool `form:"isActive,optional"` // 激活状态筛选
+		PoolID   int   `form:"poolId,optional"` // 卡池ID
+		Rarity   int   `form:"rarity,optional"` // 稀有度 (1-4)
+		IsActive *bool `form:"isActive,optional"` // 激活状态筛选
 		PageInfo
 	}
 	// 查询卡池请求
 	QueryPoolRequest {
 		PoolID    int    `form:"poolId,optional"` // 卡池ID，0表示查询所有
 		Name      string `form:"name,optional"` // 卡池名称模糊查询
-		IsActive  bool   `form:"isActive,optional"` // 激活状态筛选
+		IsActive  *bool  `form:"isActive,optional"` // 激活状态筛选
 		StartTime int64  `form:"startTime,optional"` // 开始时间筛选
 		EndTime   int64  `form:"endTime,optional"` // 结束时间筛选
 		PageInfo
@@ -626,7 +629,7 @@ type (
 	QueryRuleRequest {
 		PoolID   int    `form:"poolId,optional"` // 卡池ID，0表示查询所有
 		RuleName string `form:"ruleName,optional"` // 规则名称模糊查询
-		IsActive bool   `form:"isActive,optional"` // 激活状态筛选
+		IsActive *bool  `form:"isActive,optional"` // 激活状态筛选
 		PageInfo
 	}
 	// 抽卡规则信息
@@ -812,7 +815,7 @@ type (
 		Name     string `form:"name,optional"` // NPC名称模糊查询
 		Type     string `form:"type,optional"` // NPC类型筛选
 		Level    int    `form:"level,optional"` // 等级筛选
-		IsActive bool   `form:"isActive,optional"` // 激活状态筛选
+		IsActive *bool  `form:"isActive,optional"` // 激活状态筛选
 		PageInfo
 	}
 	// NPC信息（包含技能详情）
@@ -996,7 +999,7 @@ service accountentry {
 	post /admin/users/delete (DeleteUserRequest) returns (DeleteUserResponse)
 
 	// 钱包管理
-	@doc "获取用户钱包余额"
+	@doc "获取所有用户钱包（支持按账号、货币类型、余额范围筛选）"
 	@handler QueryAdminWallet
 	get /admin/wallets (GetUserWalletsRequest) returns (GetUserWalletsResponse)
 

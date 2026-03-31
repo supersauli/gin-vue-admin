@@ -12,7 +12,7 @@ class ApiClient {
       method,
       url: `${this.baseUrl}${url}`
     }
-    const { proxy, ...newParams } = params;
+    const { proxy, data: paramsData, ...newParams } = params;
     // 过滤空值参数
     const filteredParams = {};
     for (const key in newParams) {
@@ -29,6 +29,8 @@ class ApiClient {
     // 添加请求体数据（POST/PUT/PATCH 请求）
     if (data !== null) {
       config.data = data
+    } else if (paramsData !== null && paramsData !== undefined) {
+      config.data = paramsData
     }
 
     // 如果有 proxy 参数，添加到 headers
@@ -49,13 +51,13 @@ class ApiClient {
   }
 
   // POST 请求
-  post(url, params = {}, data = null) {
-    return service(this.createConfig('POST', url, params, data))
+  post(url, params = {}) {
+    return service(this.createConfig('POST', url, params))
   }
 
   // PUT 请求
-  put(url, params = {}, data = null) {
-    return service(this.createConfig('PUT', url, params, data))
+  put(url, params = {}) {
+    return service(this.createConfig('PUT', url, params))
   }
 
   // DELETE 请求
@@ -264,7 +266,7 @@ export const getCurrencyList = (params) => {
  * 创建用户钱包
  */
 export const createUserWallet = (params) => {
-  return adminApi.post('/admin/wallet/create', params, params.data)
+  return adminApi.post('/admin/wallet/create', params)
 }
 
 /**
