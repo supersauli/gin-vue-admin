@@ -272,6 +272,7 @@ const rulePagination = reactive({
 })
 const ruleDialogVisible = ref(false)
 const ruleDialogTitle = ref('')
+const isRuleEdit = ref(false)
 const ruleForm = reactive({
   poolId: '',
   ruleName: '',
@@ -371,7 +372,7 @@ const getRules = async () => {
     }
     const res = await getGachaRule(params)
     if (res.code === 0) {
-      ruleList.value = res.data.list
+      ruleList.value = res.data.rules
       rulePagination.total = res.data.total
     } else {
       ElMessage.error(res.message || '获取规则列表失败')
@@ -384,6 +385,7 @@ const getRules = async () => {
 }
 
 const handleCreateRule = () => {
+  isRuleEdit.value = false
   ruleDialogTitle.value = '创建抽卡规则'
   ruleForm.poolId = ''
   ruleForm.ruleName = ''
@@ -402,6 +404,7 @@ const handleCreateRule = () => {
 }
 
 const handleEditRule = (row) => {
+  isRuleEdit.value = true
   ruleDialogTitle.value = '编辑抽卡规则'
   ruleForm.poolId = row.poolId
   ruleForm.ruleName = row.ruleName
@@ -421,11 +424,11 @@ const handleEditRule = (row) => {
 
 const handleRuleSubmit = async () => {
   try {
-    if (ruleForm.poolId && ruleForm.ruleName) {
+    if (isRuleEdit.value) {
       // 更新
       const res = await updateGachaRule({ 
         proxy: selectedGame.value,
-        data: ruleForm 
+        data: { ...ruleForm, poolId: parseInt(ruleForm.poolId, 10) }
       })
       if (res.code === 0) {
         ElMessage.success('更新成功')
@@ -438,7 +441,7 @@ const handleRuleSubmit = async () => {
       // 创建
       const res = await createGachaRule({ 
         proxy: selectedGame.value,
-        data: ruleForm 
+        data: { ...ruleForm, poolId: parseInt(ruleForm.poolId, 10) }
       })
       if (res.code === 0) {
         ElMessage.success('创建成功')

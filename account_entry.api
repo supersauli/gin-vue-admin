@@ -32,8 +32,8 @@ type (
 		Province  string `json:"province"` // 省份
 		Country   string `json:"country"` // 国家
 		Language  string `json:"language"` // 语言
-		CreatedAt int64  `json:"createdAt"` // 创建时间
-		UpdatedAt int64  `json:"updatedAt"` // 更新时间
+		CreatedAt int64  `json:"createdAt,string"` // 创建时间
+		UpdatedAt int64  `json:"updatedAt,string"` // 更新时间
 	}
 	PageInfo {
 		Page     int `json:"page,optional" form:"page,optional"` // 当前页码
@@ -107,9 +107,9 @@ type (
 	}
 	// 抽卡消耗信息
 	GachaCost {
-		Type   string  `json:"type"` // 消耗类型: currency/item
-		ID     int     `json:"id"` // 物品ID (货币为0)
-		Amount float64 `json:"amount"` // 消耗数量
+		Type   string `json:"type"` // 消耗类型: currency/item
+		ID     int    `json:"id"` // 物品ID (货币为0)
+		Amount int64  `json:"amount,string"` // 消耗数量
 	}
 	// 获取卡池列表响应
 	GachaPoolsResponse {
@@ -121,18 +121,18 @@ type (
 		Name        string            `json:"name"` // 卡池名称
 		Description string            `json:"description"` // 卡池描述
 		CostType    string            `json:"costType"` // 消耗类型
-		CostAmount  float64           `json:"costAmount"` // 单次抽卡消耗
+		CostAmount  int64             `json:"costAmount,string"` // 单次抽卡消耗
 		IsActive    bool              `json:"isActive"` // 是否激活
-		StartTime   int64             `json:"startTime"` // 开始时间
-		EndTime     int64             `json:"endTime"` // 结束时间
+		StartTime   int64             `json:"startTime,string"` // 开始时间
+		EndTime     int64             `json:"endTime,string"` // 结束时间
 		Probability ProbabilityConfig `json:"probability"` // 概率配置
 	}
 	// 概率配置
 	ProbabilityConfig {
-		Rarity1 float64 `json:"rarity1"` // 普通概率 (%)
-		Rarity2 float64 `json:"rarity2"` // 稀有概率 (%)
-		Rarity3 float64 `json:"rarity3"` // 史诗概率 (%)
-		Rarity4 float64 `json:"rarity4"` // 传说概率 (%)
+		Rarity1 int64 `json:"rarity1,string"` // 普通概率 (%)
+		Rarity2 int64 `json:"rarity2,string"` // 稀有概率 (%)
+		Rarity3 int64 `json:"rarity3,string"` // 史诗概率 (%)
+		Rarity4 int64 `json:"rarity4,string"` // 传说概率 (%)
 	}
 	// 抽卡历史请求
 	GachaHistoryRequest {
@@ -143,11 +143,11 @@ type (
 	GachaHistoryResponse {
 		PageInfo
 		Records []GachaRecordInfo `json:"records"` // 记录列表
-		Total   int64             `json:"total"` // 总数
+		Total   int64             `json:"total,string"` // 总数
 	}
 	// 抽卡记录信息
 	GachaRecordInfo {
-		ID          int64  `json:"id"` // 记录ID
+		ID          int64  `json:"id,string"` // 记录ID
 		HeroID      int    `json:"heroId"` // 英雄ID
 		Name        string `json:"name"` // 英雄名称
 		Rarity      int    `json:"rarity"` // 稀有度
@@ -158,8 +158,8 @@ type (
 	// 抽卡统计响应
 	GachaStatisticsResponse {
 		PoolID int              `json:"poolId"` // 卡池ID
-		Counts map[string]int64 `json:"counts"` // 各稀有度数量统计
-		Total  int64            `json:"total"` // 总抽卡数
+		Counts map[string]int64 `json:"counts,string"` // 各稀有度数量统计
+		Total  int64            `json:"total,string"` // 总抽卡数
 	}
 	// ==================== 英雄系统类型 ====================
 	// 英雄列表响应
@@ -182,7 +182,7 @@ type (
 	}
 	// 用户英雄信息
 	UserHeroInfo {
-		ID         int64  `json:"id"` // 记录ID
+		ID         int64  `json:"id,string"` // 记录ID
 		HeroID     int    `json:"heroId"` // 英雄ID
 		Name       string `json:"name"` // 英雄名称
 		Rarity     int    `json:"rarity"` // 稀有度
@@ -252,11 +252,11 @@ type (
 	// ==================== 管理员相关类型 ====================
 	// 玩家信息
 	PlayerInfo {
-		ID        int64  `json:"id"` // 玩家 ID
+		ID        int64  `json:"id,string"` // 玩家 ID
 		AccountID int64  `json:"accountId,string,optional"` // 账号 ID
 		Data      string `json:"data"` // 玩家数据
-		CreatedAt int64  `json:"createdAt"` // 创建时间
-		UpdatedAt int64  `json:"updatedAt"` // 更新时间
+		CreatedAt int64  `json:"createdAt,string"` // 创建时间
+		UpdatedAt int64  `json:"updatedAt,string"` // 更新时间
 	}
 	// 查询玩家请求
 	QueryPlayerRequest {
@@ -267,7 +267,7 @@ type (
 	}
 	// 查询玩家响应
 	QueryPlayerResponse {
-		Total int64         `json:"total"` // 总数
+		Total int64         `json:"total,string"` // 总数
 		List  []*PlayerInfo `json:"list"` // 玩家列表
 		PageInfo
 	}
@@ -278,11 +278,11 @@ type (
 	}
 	// 创建玩家响应
 	CreatePlayerResponse {
-		ID int64 `json:"id"` // 创建的玩家 ID
+		ID int64 `json:"id,string"` // 创建的玩家 ID
 	}
 	// 更新玩家请求
 	UpdatePlayerRequest {
-		ID        int64  `json:"id"` // 玩家 ID
+		ID        int64  `json:"id,string"` // 玩家 ID
 		AccountID int64  `json:"accountId,string,optional"` // 账号 ID
 		Data      string `json:"data"` // 玩家数据
 	}
@@ -292,7 +292,7 @@ type (
 	}
 	// 删除玩家请求
 	DeletePlayerRequest {
-		ID int64 `json:"id"` // 玩家 ID
+		ID int64 `json:"id,string"` // 玩家 ID
 	}
 	// 删除玩家响应
 	DeletePlayerResponse {
@@ -307,27 +307,27 @@ type (
 	}
 	// 查询用户响应
 	QueryUserResponse {
-		Total int64       `json:"total"` // 总数
+		Total int64       `json:"total,string"` // 总数
 		List  []*UserInfo `json:"list"` // 用户列表
 		PageInfo
 	}
 	// 获取用户钱包请求
 	GetUserWalletsRequest {
-		AccountID  int64   `form:"accountId,string,optional"` // 用户账号ID，0表示查询所有
-		Currency   string  `form:"currency,optional"` // 货币类型
-		MinBalance float64 `form:"minBalance,optional"` // 余额最小值
-		MaxBalance float64 `form:"maxBalance,optional"` // 余额最大值
+		AccountID  int64  `form:"accountId,string,optional"` // 用户账号ID，0表示查询所有
+		Currency   string `form:"currency,optional"` // 货币类型
+		MinBalance int64  `form:"minBalance,optional"` // 余额最小值
+		MaxBalance int64  `form:"maxBalance,optional"` // 余额最大值
 		PageInfo
 	}
 	// 用户钱包信息
 	UserWalletInfo {
-		AccountID int64   `json:"accountId,string"` // 账号 ID
-		Currency  string  `json:"currency"` // 货币类型
-		Balance   float64 `json:"balance"` // 余额
+		AccountID int64  `json:"accountId,string"` // 账号 ID
+		Currency  string `json:"currency"` // 货币类型
+		Balance   int64  `json:"balance,string"` // 余额
 	}
 	// 获取用户钱包响应
 	GetUserWalletsResponse {
-		Total int64             `json:"total"` // 总数
+		Total int64             `json:"total,string"` // 总数
 		List  []*UserWalletInfo `json:"list"` // 用户钱包列表
 		PageInfo
 	}
@@ -397,13 +397,13 @@ type (
 	// 查询英雄响应
 	QueryHeroResponse {
 		Heroes []AdminHeroInfo `json:"heroes"` // 英雄列表
-		Total  int64           `json:"total"` // 总数
+		Total  int64           `json:"total,string"` // 总数
 		PageInfo
 	}
 	// 查询英雄列表响应
 	QueryHeroListResponse {
 		Heroes []AdminHeroInfo `json:"heroes"` // 英雄列表
-		Total  int64           `json:"total"` // 总数
+		Total  int64           `json:"total,string"` // 总数
 		PageInfo
 	}
 	// ==================== 管理员-英雄管理 ====================
@@ -473,27 +473,27 @@ type (
 	// ==================== 管理员-卡池管理 ====================
 	// 创建卡池请求
 	CreatePoolRequest {
-		PoolID          int     `json:"poolId"` // 卡池ID
-		Name            string  `json:"name"` // 卡池名称
-		Description     string  `json:"description"` // 卡池描述
-		CostCurrency    string  `json:"costCurrency"` // 消耗货币类型
-		CostAmount      float64 `json:"costAmount"` // 单次抽卡消耗
-		ProbabilityJSON string  `json:"probabilityJson"` // 概率配置(JSON)
-		IsActive        bool    `json:"isActive"` // 是否激活
-		StartTime       int64   `json:"startTime"` // 开始时间
-		EndTime         int64   `json:"endTime"` // 结束时间
+		PoolID          int    `json:"poolId"` // 卡池ID
+		Name            string `json:"name"` // 卡池名称
+		Description     string `json:"description"` // 卡池描述
+		CostCurrency    string `json:"costCurrency"` // 消耗货币类型
+		CostAmount      int64  `json:"costAmount,string"` // 单次抽卡消耗
+		ProbabilityJSON string `json:"probabilityJson"` // 概率配置(JSON)
+		IsActive        bool   `json:"isActive"` // 是否激活
+		StartTime       int64  `json:"startTime,string"` // 开始时间
+		EndTime         int64  `json:"endTime,string"` // 结束时间
 	}
 	// 更新卡池请求
 	UpdatePoolRequest {
-		PoolID          int     `json:"poolId"` // 卡池ID
-		Name            string  `json:"name"` // 卡池名称
-		Description     string  `json:"description"` // 卡池描述
-		CostCurrency    string  `json:"costCurrency"` // 消耗货币类型
-		CostAmount      float64 `json:"costAmount"` // 单次抽卡消耗
-		ProbabilityJSON string  `json:"probabilityJson"` // 概率配置(JSON)
-		IsActive        bool    `json:"isActive"` // 是否激活
-		StartTime       int64   `json:"startTime"` // 开始时间
-		EndTime         int64   `json:"endTime"` // 结束时间
+		PoolID          int    `json:"poolId"` // 卡池ID
+		Name            string `json:"name"` // 卡池名称
+		Description     string `json:"description"` // 卡池描述
+		CostCurrency    string `json:"costCurrency"` // 消耗货币类型
+		CostAmount      int64  `json:"costAmount,string"` // 单次抽卡消耗
+		ProbabilityJSON string `json:"probabilityJson"` // 概率配置(JSON)
+		IsActive        bool   `json:"isActive"` // 是否激活
+		StartTime       int64  `json:"startTime,string"` // 开始时间
+		EndTime         int64  `json:"endTime,string"` // 结束时间
 	}
 	// 创建卡池响应
 	CreatePoolResponse {
@@ -508,21 +508,21 @@ type (
 	// ==================== 管理员-概率配置 ====================
 	// 创建概率配置请求
 	CreateProbRequest {
-		PoolID   int     `json:"poolId"` // 卡池ID
-		Rarity   int     `json:"rarity"` // 稀有度 (1-4)
-		BaseProb float64 `json:"baseProb"` // 基础概率 (%)
-		Weight   int     `json:"weight"` // 权重
-		HeroIDs  string  `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
-		IsActive *bool   `json:"isActive"` // 是否激活
+		PoolID   int    `json:"poolId"` // 卡池ID
+		Rarity   int    `json:"rarity"` // 稀有度 (1-4)
+		BaseProb int64  `json:"baseProb,string"` // 基础概率 (%)
+		Weight   int    `json:"weight"` // 权重
+		HeroIDs  string `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
+		IsActive *bool  `json:"isActive"` // 是否激活
 	}
 	// 更新概率配置请求
 	UpdateProbRequest {
-		PoolID   int     `json:"poolId"` // 卡池ID
-		Rarity   int     `json:"rarity"` // 稀有度 (1-4)
-		BaseProb float64 `json:"baseProb"` // 基础概率 (%)
-		Weight   int     `json:"weight"` // 权重
-		HeroIDs  string  `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
-		IsActive *bool   `json:"isActive"` // 是否激活
+		PoolID   int    `json:"poolId"` // 卡池ID
+		Rarity   int    `json:"rarity"` // 稀有度 (1-4)
+		BaseProb int64  `json:"baseProb,string"` // 基础概率 (%)
+		Weight   int    `json:"weight"` // 权重
+		HeroIDs  string `json:"heroIds"` // 包含的英雄ID列表(JSON数组)
+		IsActive *bool  `json:"isActive"` // 是否激活
 	}
 	// 查询概率配置请求
 	QueryProbRequest {
@@ -542,25 +542,25 @@ type (
 	}
 	// 概率配置信息
 	ProbInfo {
-		PoolID    int     `json:"poolId"` // 卡池ID
-		Rarity    int     `json:"rarity"` // 稀有度 (1-4)
-		BaseProb  float64 `json:"baseProb"` // 基础概率 (%)
-		Weight    int     `json:"weight"` // 权重
-		HeroIDs   []int   `json:"heroIds"` // 包含的英雄ID列表
-		IsActive  bool    `json:"isActive"` // 是否激活
-		CreatedAt string  `json:"createdAt"` // 创建时间
-		UpdatedAt string  `json:"updatedAt"` // 更新时间
+		PoolID    int    `json:"poolId"` // 卡池ID
+		Rarity    int    `json:"rarity"` // 稀有度 (1-4)
+		BaseProb  int64  `json:"baseProb,string"` // 基础概率 (%)
+		Weight    int    `json:"weight"` // 权重
+		HeroIDs   []int  `json:"heroIds"` // 包含的英雄ID列表
+		IsActive  bool   `json:"isActive"` // 是否激活
+		CreatedAt string `json:"createdAt"` // 创建时间
+		UpdatedAt string `json:"updatedAt"` // 更新时间
 	}
 	// 查询概率配置响应
 	QueryProbResponse {
 		Probs []ProbInfo `json:"probs"` // 概率配置列表
-		Total int64      `json:"total"` // 总数
+		Total int64      `json:"total,string"` // 总数
 		PageInfo
 	}
 	// 查询卡池响应
 	QueryPoolResponse {
 		Pools []GachaPoolInfo `json:"pools"` // 卡池列表
-		Total int64           `json:"total"` // 总数
+		Total int64           `json:"total,string"` // 总数
 		PageInfo
 	}
 	// 创建概率配置响应
@@ -585,35 +585,35 @@ type (
 	// ==================== 管理员-抽卡规则 ====================
 	// 创建抽卡规则请求
 	CreateRuleRequest {
-		PoolID             int     `json:"poolId"` // 卡池ID
-		RuleName           string  `json:"ruleName"` // 规则名称
-		DrawType           int     `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
-		CostCurrency       string  `json:"costCurrency"` // 消耗货币类型
-		CostAmount         float64 `json:"costAmount"` // 消耗数量
-		Discount           float64 `json:"discount"` // 折扣
-		GuaranteeRarity    int     `json:"guaranteeRarity"` // 保底稀有度
-		GuaranteeDraws     int     `json:"guaranteeDraws"` // 保底抽数
-		GuaranteeMaxRarity int     `json:"guaranteeMaxRarity"` // 保底最高稀有度
-		DailyLimit         int     `json:"dailyLimit"` // 每日限制
-		WeeklyLimit        int     `json:"weeklyLimit"` // 每周限制
-		MonthlyLimit       int     `json:"monthlyLimit"` // 每月限制
-		IsActive           bool    `json:"isActive"` // 是否激活
+		PoolID             int    `json:"poolId"` // 卡池ID
+		RuleName           string `json:"ruleName"` // 规则名称
+		DrawType           int    `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
+		CostCurrency       string `json:"costCurrency"` // 消耗货币类型
+		CostAmount         int64  `json:"costAmount,string"` // 消耗数量
+		Discount           int64  `json:"discount,string"` // 折扣
+		GuaranteeRarity    int    `json:"guaranteeRarity"` // 保底稀有度
+		GuaranteeDraws     int    `json:"guaranteeDraws"` // 保底抽数
+		GuaranteeMaxRarity int    `json:"guaranteeMaxRarity"` // 保底最高稀有度
+		DailyLimit         int    `json:"dailyLimit"` // 每日限制
+		WeeklyLimit        int    `json:"weeklyLimit"` // 每周限制
+		MonthlyLimit       int    `json:"monthlyLimit"` // 每月限制
+		IsActive           bool   `json:"isActive"` // 是否激活
 	}
 	// 更新抽卡规则请求
 	UpdateRuleRequest {
-		PoolID             int     `json:"poolId"` // 卡池ID
-		RuleName           string  `json:"ruleName"` // 规则名称
-		DrawType           int     `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
-		CostCurrency       string  `json:"costCurrency"` // 消耗货币类型
-		CostAmount         float64 `json:"costAmount"` // 消耗数量
-		Discount           float64 `json:"discount"` // 折扣
-		GuaranteeRarity    int     `json:"guaranteeRarity"` // 保底稀有度
-		GuaranteeDraws     int     `json:"guaranteeDraws"` // 保底抽数
-		GuaranteeMaxRarity int     `json:"guaranteeMaxRarity"` // 保底最高稀有度
-		DailyLimit         int     `json:"dailyLimit"` // 每日限制
-		WeeklyLimit        int     `json:"weeklyLimit"` // 每周限制
-		MonthlyLimit       int     `json:"monthlyLimit"` // 每月限制
-		IsActive           bool    `json:"isActive"` // 是否激活
+		PoolID             int    `json:"poolId"` // 卡池ID
+		RuleName           string `json:"ruleName"` // 规则名称
+		DrawType           int    `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
+		CostCurrency       string `json:"costCurrency"` // 消耗货币类型
+		CostAmount         int64  `json:"costAmount,string"` // 消耗数量
+		Discount           int64  `json:"discount,string"` // 折扣
+		GuaranteeRarity    int    `json:"guaranteeRarity"` // 保底稀有度
+		GuaranteeDraws     int    `json:"guaranteeDraws"` // 保底抽数
+		GuaranteeMaxRarity int    `json:"guaranteeMaxRarity"` // 保底最高稀有度
+		DailyLimit         int    `json:"dailyLimit"` // 每日限制
+		WeeklyLimit        int    `json:"weeklyLimit"` // 每周限制
+		MonthlyLimit       int    `json:"monthlyLimit"` // 每月限制
+		IsActive           bool   `json:"isActive"` // 是否激活
 	}
 	// 创建抽卡规则响应
 	CreateRuleResponse {
@@ -634,26 +634,26 @@ type (
 	}
 	// 抽卡规则信息
 	RuleInfo {
-		PoolID             int     `json:"poolId"` // 卡池ID
-		RuleName           string  `json:"ruleName"` // 规则名称
-		DrawType           int     `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
-		CostCurrency       string  `json:"costCurrency"` // 消耗货币类型
-		CostAmount         float64 `json:"costAmount"` // 消耗数量
-		Discount           float64 `json:"discount"` // 折扣
-		GuaranteeRarity    int     `json:"guaranteeRarity"` // 保底稀有度
-		GuaranteeDraws     int     `json:"guaranteeDraws"` // 保底抽数
-		GuaranteeMaxRarity int     `json:"guaranteeMaxRarity"` // 保底最高稀有度
-		DailyLimit         int     `json:"dailyLimit"` // 每日限制
-		WeeklyLimit        int     `json:"weeklyLimit"` // 每周限制
-		MonthlyLimit       int     `json:"monthlyLimit"` // 每月限制
-		IsActive           bool    `json:"isActive"` // 是否激活
-		CreatedAt          string  `json:"createdAt"` // 创建时间
-		UpdatedAt          string  `json:"updatedAt"` // 更新时间
+		PoolID             int    `json:"poolId"` // 卡池ID
+		RuleName           string `json:"ruleName"` // 规则名称
+		DrawType           int    `json:"drawType"` // 抽卡类型 (1-单抽, 2-十连抽)
+		CostCurrency       string `json:"costCurrency"` // 消耗货币类型
+		CostAmount         int64  `json:"costAmount,string"` // 消耗数量
+		Discount           int64  `json:"discount,string"` // 折扣
+		GuaranteeRarity    int    `json:"guaranteeRarity"` // 保底稀有度
+		GuaranteeDraws     int    `json:"guaranteeDraws"` // 保底抽数
+		GuaranteeMaxRarity int    `json:"guaranteeMaxRarity"` // 保底最高稀有度
+		DailyLimit         int    `json:"dailyLimit"` // 每日限制
+		WeeklyLimit        int    `json:"weeklyLimit"` // 每周限制
+		MonthlyLimit       int    `json:"monthlyLimit"` // 每月限制
+		IsActive           bool   `json:"isActive"` // 是否激活
+		CreatedAt          string `json:"createdAt"` // 创建时间
+		UpdatedAt          string `json:"updatedAt"` // 更新时间
 	}
 	// 查询抽卡规则响应
 	QueryRuleResponse {
 		Rules []RuleInfo `json:"rules"` // 规则列表
-		Total int64      `json:"total"` // 总数
+		Total int64      `json:"total,string"` // 总数
 		PageInfo
 	}
 	// 删除抽卡规则请求
@@ -673,24 +673,24 @@ type (
 	// 查询抽卡日志响应
 	QueryGachaLogResponse {
 		Logs  []GachaLogInfo `json:"logs"` // 日志列表
-		Total int64          `json:"total"` // 总数
+		Total int64          `json:"total,string"` // 总数
 		PageInfo
 	}
 	// 抽卡日志详情
 	GachaLogInfo {
-		ID          int64   `json:"id"` // 日志ID
-		AccountID   int64   `json:"accountId"` // 用户ID
-		PoolID      int     `json:"poolId"` // 卡池ID
-		DrawType    int     `json:"drawType"` // 抽卡类型
-		Times       int     `json:"times"` // 抽卡次数
-		CostType    string  `json:"costType"` // 消耗类型
-		CostAmount  float64 `json:"costAmount"` // 消耗数量
-		HeroID      int     `json:"heroId"` // 抽到的英雄ID
-		HeroName    string  `json:"heroName"` // 英雄名称
-		Rarity      int     `json:"rarity"` // 稀有度
-		IsGuarantee bool    `json:"isGuarantee"` // 是否保底
-		Status      int     `json:"status"` // 状态
-		DrawTime    string  `json:"drawTime"` // 抽卡时间
+		ID          int64  `json:"id,string"` // 日志ID
+		AccountID   int64  `json:"accountId,string"` // 用户ID
+		PoolID      int    `json:"poolId"` // 卡池ID
+		DrawType    int    `json:"drawType"` // 抽卡类型
+		Times       int    `json:"times"` // 抽卡次数
+		CostType    string `json:"costType"` // 消耗类型
+		CostAmount  int64  `json:"costAmount,string"` // 消耗数量
+		HeroID      int    `json:"heroId"` // 抽到的英雄ID
+		HeroName    string `json:"heroName"` // 英雄名称
+		Rarity      int    `json:"rarity"` // 稀有度
+		IsGuarantee bool   `json:"isGuarantee"` // 是否保底
+		Status      int    `json:"status"` // 状态
+		DrawTime    string `json:"drawTime"` // 抽卡时间
 	}
 	// ==================== 管理员-道具管理 ====================
 	// 创建道具请求
@@ -756,14 +756,14 @@ type (
 		Price      int    `json:"price"` // 售价
 		IsSellable bool   `json:"isSellable"` // 是否可出售
 		IsConsume  bool   `json:"isConsume"` // 是否消耗品
-		TotalStock int64  `json:"totalStock"` // 总库存量
+		TotalStock int64  `json:"totalStock,string"` // 总库存量
 		CreatedAt  string `json:"createdAt"` // 创建时间
 		UpdatedAt  string `json:"updatedAt"` // 更新时间
 	}
 	// 查询道具响应
 	QueryItemResponse {
 		Items []ItemInfoWithStock `json:"items"` // 道具列表
-		Total int64               `json:"total"` // 总数
+		Total int64               `json:"total,string"` // 总数
 		PageInfo
 	}
 	// 删除道具请求
@@ -837,7 +837,7 @@ type (
 	// 查询NPC响应
 	QueryNPCResponse {
 		NPCs  []NPCQueryInfo `json:"npcs"` // NPC列表
-		Total int64          `json:"total"` // 总数
+		Total int64          `json:"total,string"` // 总数
 		PageInfo
 	}
 	// 删除NPC请求
@@ -847,22 +847,22 @@ type (
 	// ==================== 管理员-货币管理 ====================
 	// 货币调整请求
 	CurrencyAdjustRequest {
-		AccountID int64   `json:"accountId"` // 用户ID
-		Currency  string  `json:"currency"` // 货币类型
-		Amount    float64 `json:"amount"` // 调整数量(正数增加，负数减少)
-		Reason    string  `json:"reason"` // 原因
+		AccountID int64  `json:"accountId,string"` // 用户ID
+		Currency  string `json:"currency"` // 货币类型
+		Amount    int64  `json:"amount,string"` // 调整数量(正数增加，负数减少)
+		Reason    string `json:"reason"` // 原因
 	}
 	// 货币调整响应
 	CurrencyAdjustResponse {
-		AccountID  int64   `json:"accountId"` // 用户ID
-		Currency   string  `json:"currency"` // 货币类型
-		NewBalance float64 `json:"newBalance"` // 新余额
+		AccountID  int64  `json:"accountId,string"` // 用户ID
+		Currency   string `json:"currency"` // 货币类型
+		NewBalance int64  `json:"newBalance,string"` // 新余额
 	}
 	// 创建用户钱包请求
 	CreateUserWalletRequest {
-		AccountID  int64   `json:"accountId,string"` // 账号 ID
-		Currency   string  `json:"currency"` // 货币类型
-		InitAmount float64 `json:"initAmount"` // 初始金额
+		AccountID  int64  `json:"accountId,string"` // 账号 ID
+		Currency   string `json:"currency"` // 货币类型
+		InitAmount int64  `json:"initAmount,string"` // 初始金额
 	}
 	// 创建用户钱包响应
 	CreateUserWalletResponse {

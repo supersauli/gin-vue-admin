@@ -180,12 +180,17 @@ service.interceptors.response.use(
       }
       return response.data
     } else {
+      const errorMsg = response.data.message || response.data.msg || decodeURI(response.headers.msg) || '请求失败'
       ElMessage({
         showClose: true,
-        message: response.data.msg || decodeURI(response.headers.msg),
-        type: 'error'
+        duration: 0,
+        offset: 60,
+        dangerouslyUseHTMLString: true,
+        message: `<div style="max-width: 500px; word-break: break-all; user-select: text; cursor: text; font-weight: 500;">${errorMsg}</div>`,
+        type: 'error',
+        zIndex: 9999
       })
-      return response.data.msg ? response.data : response
+      return response.data
     }
   },
   (error) => {
@@ -217,9 +222,16 @@ service.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    emitter.emit('show-error', {
-      code: error.response.status,
-      message: getErrorMessage(error)
+    // 其他 HTTP 错误使用 ElMessage 提示
+    const errorMsg = error.response?.data?.message || error.response?.data?.msg || getErrorMessage(error)
+    ElMessage({
+      showClose: true,
+      duration: 0,
+      offset: 60,
+      dangerouslyUseHTMLString: true,
+      message: `<div style="max-width: 500px; word-break: break-all; user-select: text; cursor: text; font-weight: 500;">[${error.response.status}] ${errorMsg}</div>`,
+      type: 'error',
+      zIndex: 9999
     })
     return Promise.reject(error)
   }

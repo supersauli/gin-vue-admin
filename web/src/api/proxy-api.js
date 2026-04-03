@@ -217,14 +217,13 @@ export const updateUserInfo = (params) => {
 // ==================== 管理员相关API ====================
 
 /**
- * 设置抽卡规则（创建或更新）
+ * 设置抽卡规则（已废弃，请使用 createGachaRule 或 updateGachaRule）
  */
 export const setGachaRule = (params) => {
-  // 构建请求参数
   const requestParams = {
     proxy: params.proxy,
     data: {
-      poolId: params.poolId,
+      poolId: params.poolId ? parseInt(params.poolId, 10) : params.poolId,
       ruleName: params.ruleName,
       drawType: params.drawType,
       costCurrency: params.costCurrency,
@@ -240,8 +239,7 @@ export const setGachaRule = (params) => {
     }
   }
   
-  // 根据是否存在poolId来判断是创建还是更新
-  if (params.poolId) {
+  if (params.isEdit) {
     return updateGachaRule(requestParams)
   } else {
     return createGachaRule(requestParams)

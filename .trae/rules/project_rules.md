@@ -771,3 +771,306 @@ web/src/plugin/[插件名]/
 4. **优化用户体验**：关注页面加载速度、交互流畅性和错误处理
 5. **考虑扩展性**：设计时预留扩展接口，便于后续功能增强
 6. **重视安全性**：实现完善的权限控制和数据验证机制
+
+---
+
+## **API 类型定义依赖说明**
+
+### **`account_entry.api` 文件说明**
+
+本项目使用 `account_entry.api` 文件作为**唯一的 API 接口类型定义源**，该文件定义了所有前后端交互的请求参数、响应结构和数据模型。
+
+- **文件路径**: `/home/liujinli/git/gin-vue-admin/account_entry.api`
+- **RPC 服务定义语法**: go-zero 语法 (v1)
+- **作用**: 
+  - 定义所有 API 接口的请求/响应类型
+  - 作为前后端类型一致性的权威参考
+  - 不要生成后端 Go结构，只用 前端 TypeScript 类型映射
+  - 所有的接口都生成到 proxy-api.js 中，vue界面 生成到 view/admin 中
+  - 这个指定义一部分的 api 接口，其他的是 gin-vue-admin 的 api 接口不要动
+  
+### **类型规范**
+
+前端 JavaScript/TypeScript 代码中的参数类型**必须**与 `account_entry.api` 中定义的类型严格对应。以下是主要类型映射表：
+
+#### **1. 抽卡规则相关 (Gacha Rule)**
+
+| API 字段 | Go 类型 | JS 类型 | 说明 |
+|---------|---------|---------|------|
+| `poolId` | `int` | `number` | 卡池ID，** |
+| `必须为整数**ruleName` | `string` | `string` | 规则名称 |
+| `drawType` | `int` | `number` | 抽卡类型 (1-单抽, 2-十连抽) |
+| `costCurrency` | `string` | `string` | 消耗货币类型 |
+| `costAmount` | `float64` | `number` | 消耗数量 |
+| `discount` | `float64` | `number` | 折扣 |
+| `guaranteeRarity` | `int` | `number` | 保底稀有度 |
+| `guaranteeDraws` | `int` | `number` | 保底抽数 |
+| `guaranteeMaxRarity` | `int` | `number` | 保底最高稀有度 |
+| `dailyLimit` | `int` | `number` | 每日限制 |
+| `weeklyLimit` | `int` | `number` | 每周限制 |
+| `monthlyLimit` | `int` | `number` | 每月限制 |
+| `isActive` | `bool` | `boolean` | 是否激活 |
+
+**对应 API 定义**:
+- `CreateRuleRequest` (L587-601)
+- `UpdateRuleRequest` (L603-617)
+- `RuleInfo` (L636-652)
+
+#### **2. 英雄相关 (Hero)**
+
+| API 字段 | Go 类型 | JS 类型 | 说明 |
+|---------|---------|---------|------|
+| `heroId` | `int` | `number` | 英雄ID，**必须为整数** |
+| `name` | `string` | `string` | 名称 |
+|英雄 `rarity` | `int` | `number` | 稀有度 (1-4) |
+| `iconUrl` | `string` | `string` | 图标URL |
+| `imageUrl` | `string` | `string` | 图片URL |
+| `isActive` | `bool` | `boolean` | 是否在奖池中 |
+| `weight` | `int` | `number` | 权重 |
+| `attributes` | `string` | `string` | 英雄属性(JSON字符串) | 
+
+**对应 API定义**:
+- `CreateHeroRequest` (L424-433)
+- `UpdateHeroRequest` (L435-444)
+- `HeroInfo` (L170-178)
+- `AdminHeroInfo`5 (L38-396)
+
+#### **3. 道具相关 (Item)**
+
+| API 字段 | Go 类型 | JS 类型 | 说明 |
+|---------|---------|---------|------|
+| `itemId` | `int` | `number` | 道具ID，**必须为整数** |
+| `name` | `string` | `string` | 道具名称 |
+| `type` | `string` | `string` |
+| 道具类型 | `subType` | `string` | `string` | 子类型 |
+| `desc` | `string` | `string` | 道具描述
+| `icon |Url` | `string` | `string` | URL |
+|图标 `rarity` | `int` | `number` | 稀有度 |
+| `maxStack` | `int` | `number` | 最大堆叠数 |
+| `useLevel` | `int` | 使用等级 | `number`限制 |
+| `price` | `int` | `number` | 售价 |
+| `isSellable` | `bool` | `boolean` | 是否可出售 |
+| `isConsume` | `bool` | `boolean` | 是否消耗品 |
+
+**对应 API 定义**:
+- `CreateItemRequest` (L697-710)
+- `UpdateItemRequest` (L7125)2-7
+- `ItemInfo` (L211-220)
+
+#### **4. NPC 相关**
+
+| API 字段 | Go 类型 | JS说明 |
+| 类型 | ---------|---------|---------|------|
+| `npcId` | `int` | `number` | NPC ID，**必须为整数 |
+| `**name` | `string` | `string` | NPC名称 |
+| `type` | `string` | `string` | NPC类型 |
+| `subType` | `string` | `string` | 子类型 |
+| `level` | `int` | 等级 | `number` |
+| `desc` | `string` | `string` | 描述 |
+| `iconUrl` | `string` | `string` | 图标URL |
+| `model` | `string` | `string` | 模型 |
+| `attributes` | `string` | `string` | 属性(JSON字符串) |
+| `skills` | `string` | `string` | 技能(JSON数组字符串) |
+| `isActive` | `bool` | `boolean` | 是否激活 |
+
+**对应 API 定义**:
+- `CreateNPC7Request` (L75-787)
+- `UpdateNPCRequest` (L789-80 `1)
+-NPCInfo` (L240-251)
+
+#### **5. 用户相关 (User)**
+
+| API 字段 | Go 类型 | JS 类型 | 说明 |
+|---------|---------|---------|------|
+| `accountId` | `int64` | `number` | 账号ID，**必须为整数** |
+| `openId` | `string` | `string` | 用户 OpenID |
+| `unionId` | `string` | `用户string` |  UnionID |
+| `nickName` | `string` | `string` | 昵称 |
+| `avatarUrl` | `string` | `string` | 头像 URL |
+| `gender` | `int` | `number` | 性别 |
+| `city` | `string` | `string` | 城市 |
+| `province` | `string` | `string` | 省份 |
+| `country` | `string` | `string` | 国家 |
+| `language` | `string` | `string` | 语言 |
+
+**对应 API 定义**:
+- `UserInfo` (L24-37)
+- `UserRequest` (CreateL335-345)
+- `UpdateUserRequest` (L351-362)
+
+#### **6. 玩家相关 (Player)**
+
+| API 字段 | Go 类型 | JS 类型 | 说明 |
+|---------|---------|---------
+| `|------|id` | `int64` | `number` | 玩家 ID，**必须为整数** |
+| `accountId` | `int64` | `number` | 账号 ID |
+| `data` |` | `string `string` | 玩家数据 |
+
+**对应 API 定义**:
+- `PlayerInfo`4 (L25-260)
+- `CreatePlayerRequest` (L275-278)
+- `UpdatePlayerRequest` (L284-2887. 卡)
+
+#### **池相关 (Pool)**
+
+| API 字段 | Go 类型 | JS  | 说明 |类型
+|---------|---------|---------|------|
+| `poolId` | `int` | `number` | 卡池ID，**必须为整数** |
+| `name` | `string` | `string` | 卡池string` | `description` | `名称 |
+| `string` | 卡池描述 |
+| `costCurrency` | `string` | `string` | 消耗货币类型 |
+| `costAmount` | `float64` | `number` | 单次抽卡消耗 |
+| `probabilityJson` | `string` | `string` | 概率配置(JSON字符串) |
+| `isActive` | `bool` | `boolean` | 是否激活 |
+| `startTime` | `int64` | `number` | 开始时间(时间戳) |
+| `endTime` | `int64` | `number` | 结束时间时间戳) | (
+
+**对应 API定义**:
+- `CreatePoolRequest` (L475-485)
+- `UpdatePoolRequest` (L4987-4 `7)
+-GachaPoolInfo1` (L19-129)
+
+#### **8. 概率配置相关 (Probability)**
+
+| API 类型字段 | Go  | JS 类型 | 说明 |
+|---------|---------|---------|------|Id
+| `pool` | `int` | `number` | 卡池ID，**必须为整数** |
+| `rarity` | `int` | `number` | 稀有度 (1-4) |
+| `baseProb` | `float64` | `number` | 基础概率 (%) |
+| `weight` | `int` | `number` | 权重 |
+| `heroIds` | `string` / `[]int` | `number[]` |string` / `列表 包含的英雄ID |
+| `isActive` | `*bool` | `boolean` | 是否激活(
+**对应可选) |
+ API 定义**:
+- `CreateProbRequest` (L510
+- `-517)UpdateProbRequest` (L519-526)
+- `ProbInfo` (L544-553)
+
+#### **9. 货币管理相关 (Currency)**
+
+| Go API 字段 | 类型 | JS 类型 | 说明 |
+|---------|---------||
+| `---------|------accountId` | `int64` | `number` | 用户ID，****必须为整数 |
+| `currency` | `string` | `货币string` | 类型 |
+| `amount` | `float64` | `number数量` | 调整 |
+| `reason` | `string` | `string` | 原因 |
+| `balance` | `float64` | `number |
+
+**对应` | 余额 API 定义**:
+- `CurrencyAdjustRequest` (L849-854)
+-` (L3 `UserWalletInfo223-310. 7)
+
+#### **分页相关 (PageInfo)**
+
+| API 字段 | Go 类型 | JS 类型 | 说明 |
+|---------|---------|---------|------|
+| `page` | `int` | `当前number` | 
+|页码 | `pageSize` | `int` | `number` | 每页大小 API |
+
+**对应 定义**:
+- `PageInfo` (L38-41)转换
+
+### **类型注意事项**
+
+1. **整型字段必须转换**: 
+   - 所有 `int`、`int64` 类型的字段（如 `poolId`、`heroitemIdId`、``、`npcaccountIdId`、`` 等）在前端传递时**类型**
+  必须确保为整数 - 使用 `parseInt(value, 10)` 或 `Number(value)` 进行转换
+   - 示例：`poolId: parseInt(params.poolId)`, 10
+
+2. **浮点型字段**:
+   - 所有 `float64`  `类型的字段（如`discount`、costAmount`、`baseProb`、`balance` 等）在前端传递时**必须确保为数字类型**
+   - 使用 `parseFloat(value)` 或 `Number(value)` 进行转换
+
+3. **布尔型字段**:
+   - 所有 `bool` 类型的字段（、如 `isActive``isSellable`、`isConsume` 等）在前端传递时布尔类型**必须确保为**
+   - 使用 `Boolean(value)` 或 `value === true` 进行转换
+
+4. **JSON 字符串字段**:
+   - 某些字段在 Go 中定义为 `string` 类型，但实际存储的是 JSON 数据（如 `skills`、`attributesJson`、`probability` 等）
+   - 前端传递时需要使用 `JSON.stringify()` 转换为字符串
+   - 接收时需要使用解析为对象
+ `JSON.parse()` 
+5. **可选字段处理**:
+   - Go 中使用 `*bool`、`*int` 等指针类型表示可选字段
+   - 前端传递时如果值为 `null` 或 `undefined`，应**不包含该体字段**在请求中
+   -null 或者传递 `` 值，由后端处理
+
+### **API 接口路由映射**
+
+以下是 `account_entry.api` 中定义的接口路由与前端 API 函数的对应关系：
+
+#### **管理后台接口 (`/api/v1/admin/*`)**
+
+| 后端路由 | 请求类型 | 前端 API说明 |
+| 函数 | ---------|---------|---------|------|
+| `GET /admin/players` | `QueryPlayerRequest` | `getPlayerList` | 查询玩家列表 |
+| `POST /admin/players/create`Request | `CreatePlayer` | `create创建玩家 |Player` | 
+| `POST /admin/players/update` | `UpdatePlayerRequest` | `updatePlayer` | 更新玩家 |
+| `POST /admin/players/delete` | `DeletePlayerRequest` | `deletePlayer` | | 删除玩家
+| `GET /admin/users` | `QueryUser` | `getUserRequestList` | 查询用户列表 |admin/users/create`
+| `POST / | `CreateUserRequest` | `createUser` | 用户 |
+|创建/users/update` | `POST /admin `UpdateUserRequest` | `updateUser` | | 更新用户
+| `POST` | /admin/users/delete `DeleteUserRequest` | `deleteUser` | 删除用户 |
+| `GET /admin/wallets` | `GetUserWalletsRequest` |` | `getCurrencyList | 获取钱包列表admin/wallet/create
+| `POST /` | `CreateUserWalletRequest` | `createUserWallet` | 创建钱包 |
+| `POST /admin/currency/adjust` | `Currency
+| `POST `adjustCurrency` | 调整货币AdjustRequest` | | /admin/hero/create` | `CreateHeroRequest` | `createHero` |
+| | 创建英雄 `POST /admin/hero/update` | `UpdateHeroRequest` | `update更新英雄 |Hero` | 
+| `POST /admin/hero/delete` | `DeleteHeroRequest` |` | `deleteHero | 删除英雄
+| `GET /`admin/hero/list | `QueryHero` | `getRequestHeroList` | 查询英雄列表 |
+| `POST /admin/hero/import` | `BatchImportHeroRequest` | `importHeroes` | 批量导入英雄 |
+| `GET /admin `QueryHeroRequest/hero/export` |` | `exportHero` | 导出英雄POST /admin/ |
+| `hero/attr/create` | `HeroAttrInfo` | ` |createHeroAttr` 创建英雄属性 |
+| `GET /admin/hero/attr/query` | `QueryHeroRequest` | `queryHeroAttr` | 查询英雄属性 |
+| `POST /admin/hero/attr/update` | `HeroAttrInfo` | `updateHeroAttr` 更新英雄属性 | |
+| `POST /admin/hero/attr/delete` | `DeleteHeroRequest` | `deleteHeroAttr` | | 删除英雄属性
+| `POST /admin/hero/attr/import` | `BatchImportHeroAttrRequest`HeroAttr` | | `batchImport 批量导入属性 |
+| `GET /admin/hero/attr/export` | `QueryHero` | `exportRequestHeroAttr` | 导出属性 |
+| `POST /admin/pool/create` | `CreatePoolRequest` | `createPool` | 创建卡池 |
+| `POST /admin/pool/update` | `UpdatePoolRequest` | `update更新Pool` | 卡池 |
+| `GET /admin/pools` | `QueryPoolRequest` | `query查询Pool` | 卡池 |
+| `POST /admin/pool/delete` | `DeletePoolRequest` | `deletePool` | 删除卡池 |
+| `POST /admin/p`ool/prob/create | `CreateProbRequest` | `createProb` | 创建概率配置 |
+| ` /admin/poolPOST/prob/update` | `UpdateProbRequest` | `updateProb` | 更新概率配置 |
+| `GET /admin/pool/probs` | `QueryProbRequest` | `queryProb` | 查询概率配置 |
+| `POST /admin/pool/prob/deleteProbRequest` |` | `Delete `deleteProb` | 删除概率配置 |
+| `POST /admin/gacha | `CreateRule/rule/create`Request` | `createGachaRule` | 创建抽卡规则 |
+| `POST /admin/gacha/rule/update` | `UpdateRuleRequest` | `updateGachaRule` |规则 |
+| 更新抽卡 `GET /admin/gacha/rules` | `QueryRuleRequest` | `getGachaRule` |规则 查询抽卡 |
+| `POST /admin/gacha/rule/delete` | `DeleteRuleRequest` | `deleteGachaRule`卡 | 删除抽规则 |
+| `GET /admin/logs` | `/gachaQueryGachaLogRequest` | `getGachaLogs` | 查询抽卡日志 |
+| `POST /admin/item/create` | `CreateItemRequest` | `createItem` |
+| | 创建道具 `POST /admin/item/update` | `UpdateItemRequest` | `update道具 |
+|Item` | 更新 `GET /admin `QueryItemRequest/items` | | `getItemList` `` | 查询道具 |
+|POST /admin/item/delete` | ` |DeleteItemRequest` `deleteItem` | 删除道具 |
+| `POST /admin/npc/create` | `Create `createNPC`NPCRequest` | | 创建NPC |admin/npc/update
+| `POST /Request` | `NPC` | `UpdateupdateNPC` | 更新NPC | /
+| `GETadmin/npcs` | `QueryNPCRequest` | `getNPCList` | 查询NPC |
+| `POST /admin/npc/delete` | `DeleteNPCRequest` | `deleteNPC` | 删除NPC |
+
+### **开发检查或修改前端 API清单**
+
+在编写 代码时，**必须**进行
+- [ ] 以下检查：
+确认 `account_entry.api` 中对应请求类型的字段定义
+- [ ] 确保所有 `int`/`int64` 字段使用 `parseInt()` 转换
+- [ 所有 `float6] 确保4` 字段使用 `parseFloat()` 或 `Number()` 转换
+- [ ] 确保所有 `bool` 字段使用 `Boolean()` 转换
+- [ ] 确保所有 JSON 字符串字段使用 `JSON.stringify()` [ 转换
+- ] 检查字段定义名称是否与 API 大小完全一致（注意写）
+- [遗漏 ] 检查是否
+- [了必填字段 ] 检查可选null字段是否正确处理了 ``/`undefined` 值
+
+---
+
+### **建议和方案**
+
+基于以上规范，建议AI在开发gin-vue-admin项目时：
+
+1. **严格遵循分层架构**：确保前后端代码都按照规定的层次结构组织
+2. **保持代码一致性**：使用统一的命名规范、注释格式和代码风格
+3. **注重文档完整性**：确保API文档、代码注释和使用说明的完整性
+4. **优化用户体验**：关注页面加载速度、交互流畅性和错误处理
+5. **考虑扩展性**：设计时预留扩展接口，便于后续功能增强. **重视安全性
+6**：实现完善的权限控制和数据验证机制
+7. **遵循 API 类型定义**：所有前端参数类型必须与 `account_entry.api` 保持一致

@@ -210,6 +210,7 @@ const pagination = reactive({
 // 对话框状态
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
+const isEdit = ref(false)
 
 // 表单数据
 const form = reactive({
@@ -300,7 +301,7 @@ const getPools = async () => {
     }
     const res = await queryPool(params)
     if (res.code === 0) {
-      poolList.value = res.data.list
+      poolList.value = res.data.pools
       pagination.total = res.data.total
     } else {
       ElMessage.error(res.message || '获取卡池列表失败')
@@ -315,6 +316,7 @@ const getPools = async () => {
 // 创建卡池
 const handleCreate = () => {
   dialogTitle.value = '创建卡池'
+  isEdit.value = false
   form.poolId = ''
   form.name = ''
   form.description = ''
@@ -330,6 +332,7 @@ const handleCreate = () => {
 // 编辑卡池
 const handleEdit = (row) => {
   dialogTitle.value = '编辑卡池'
+  isEdit.value = true
   form.poolId = row.poolId
   form.name = row.name
   form.description = row.description
@@ -345,11 +348,20 @@ const handleEdit = (row) => {
 // 提交表单
 const handleSubmit = async () => {
   try {
-    if (form.poolId) {
+    // 构建请求数据，确保类型正确
+    const requestData = {
+      ...form,
+      poolId: form.poolId ? parseInt(form.poolId, 10) : form.poolId,
+      costAmount: parseFloat(form.costAmount) || 0,
+      startTime: form.startTime ? parseInt(form.startTime, 10) : null,
+      endTime: form.endTime ? parseInt(form.endTime, 10) : null
+    }
+    
+    if (isEdit.value) {
       // 更新
       const res = await updatePool({ 
         proxy: selectedGame.value,
-        data: form 
+        data: requestData 
       })
       if (res.code === 0) {
         ElMessage.success('更新成功')
@@ -362,7 +374,7 @@ const handleSubmit = async () => {
       // 创建
       const res = await createPool({ 
         proxy: selectedGame.value,
-        data: form 
+        data: requestData 
       })
       if (res.code === 0) {
         ElMessage.success('创建成功')
@@ -398,9 +410,16 @@ const handleDelete = async (poolId) => {
 // 切换激活状态
 const handleToggleActive = async (row) => {
   try {
+    // 构建请求数据，确保类型正确
+    const requestData = {
+      ...row,
+      poolId: parseInt(row.poolId, 10),
+      costAmount: parseFloat(row.costAmount) || 0
+    }
+    
     const res = await updatePool({ 
       proxy: selectedGame.value,
-      data: row 
+      data: requestData 
     })
     if (res.code !== 0) {
       ElMessage.error(res.message || '更新失败')
