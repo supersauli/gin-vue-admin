@@ -34,8 +34,9 @@
       </el-form-item>
       <el-form-item label="激活状态">
         <el-select v-model="searchForm.isActive" placeholder="请选择激活状态">
-          <el-option label="激活" :value="true" />
-          <el-option label="未激活" :value="false" />
+          <el-option label="全部" :value="0" />
+          <el-option label="激活" :value="1" />
+          <el-option label="未激活" :value="-1" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -184,7 +185,7 @@ const searchForm = reactive({
   name: '',
   type: '',
   level: '',
-  isActive: ''
+  isActive: 0
 })
 
 // 分页信息
@@ -248,7 +249,7 @@ const resetForm = () => {
   searchForm.name = ''
   searchForm.type = ''
   searchForm.level = ''
-  searchForm.isActive = ''
+  searchForm.isActive = 0
   pagination.page = 1
   getNPCs()
 }

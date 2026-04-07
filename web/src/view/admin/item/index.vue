@@ -39,8 +39,9 @@
       </el-form-item>
       <el-form-item label="是否消耗品">
         <el-select v-model="searchForm.isConsume" placeholder="请选择是否消耗品">
-          <el-option label="是" :value="true" />
-          <el-option label="否" :value="false" />
+          <el-option label="全部" :value="0" />
+          <el-option label="是" :value="1" />
+          <el-option label="否" :value="-1" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -199,7 +200,7 @@ const searchForm = reactive({
   name: '',
   type: '',
   rarity: '',
-  isConsume: ''
+  isConsume: 0
 })
 
 // 分页信息
@@ -275,7 +276,7 @@ const resetForm = () => {
   searchForm.name = ''
   searchForm.type = ''
   searchForm.rarity = ''
-  searchForm.isConsume = ''
+  searchForm.isConsume = 0
   pagination.page = 1
   getItems()
 }
